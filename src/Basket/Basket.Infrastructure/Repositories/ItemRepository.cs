@@ -30,18 +30,6 @@ namespace Basket.Infrastructure.Repositories
             }
         }
 
-        public void Add(Domain.Models.Basket basket, Item item)
-        {
-            try
-            {
-                basket.Items.Add(item);
-            }
-            catch (Exception)
-            {
-                throw;
-            }
-        }
-
         public void Remove(Item item)
         {
             try
