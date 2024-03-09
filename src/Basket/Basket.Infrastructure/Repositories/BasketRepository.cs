@@ -42,7 +42,20 @@ namespace Basket.Infrastructure.Repositories
         {
             try
             {
+                basket.Active = true;
                 await _context.Basket.AddAsync(basket);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        public void Update(Domain.Models.Basket basket)
+        {
+            try
+            {
+                _context.Basket.Update(basket);
             }
             catch (Exception)
             {

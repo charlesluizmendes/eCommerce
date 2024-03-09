@@ -29,7 +29,7 @@ namespace Basket.Infrastructure.Client
             }
             catch (Exception)
             {
-                throw;
+                return null;
             }
         }
     }

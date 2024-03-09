@@ -30,6 +30,19 @@ namespace Basket.Infrastructure.Repositories
             }
         }
 
+        public async Task AddAsync(Item item)
+        {
+            try
+            {
+                item.Active = true;
+                await _context.Item.AddAsync(item);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
         public void Remove(Item item)
         {
             try

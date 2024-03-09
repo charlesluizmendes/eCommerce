@@ -14,10 +14,22 @@ namespace Basket.Application.Handlers
         protected async override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
         {
             var token = _httpContextAccessor.HttpContext.Request.Headers["Authorization"].ToString();
-
+            
             request.Headers.Add("Authorization", token);
 
-            return await base.SendAsync(request, cancellationToken);
+            try
+            {
+                var response = await base.SendAsync(request, cancellationToken);
+
+                if (!response.IsSuccessStatusCode)
+                    return null;
+
+                return response;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
         }
     }
 }

@@ -54,8 +54,12 @@ namespace Basket.Domain.Services
             else
             {
                 // Se o item não existir, crie um novo item e adicione ao carrinho
-                basket.Items.Add(item);
+                item.BasketId = basket.Id;
+                await _repository.AddAsync(item);
             }
+
+            // Atualiza o valor total do Carrinho
+            basket.Amount = basket.Items.Sum(x => x.Quantity * x.Price).Value;
 
             await _repository.SaveChangesAsync();
         }
@@ -83,6 +87,11 @@ namespace Basket.Domain.Services
                 {
                     // Remove o Carrinho
                     _basketRepository.Remove(item.Basket);
+                }
+                else 
+                {
+                    // Atualiza o valor total do Carrinho
+                    item.Basket.Amount = item.Basket.Items.Sum(x => x.Quantity * x.Price).Value;
                 }
 
                 // Salve as alterações no banco de dados
