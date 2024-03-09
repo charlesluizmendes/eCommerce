@@ -30,9 +30,16 @@ namespace Basket.Infrastructure.Repositories
             }
         }
 
-        public async Task AddAsync(Item item)
+        public void Add(Domain.Models.Basket basket, Item item)
         {
-            await _context.Item.AddAsync(item);
+            try
+            {
+                basket.Items.Add(item);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
 
         public void Remove(Item item)

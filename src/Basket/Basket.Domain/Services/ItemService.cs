@@ -54,7 +54,7 @@ namespace Basket.Domain.Services
             else
             {
                 // Se o item não existir, crie um novo item e adicione ao carrinho
-                basket.Items.Add(item);
+                _repository.Add(basket, item);
             }
 
             await _repository.SaveChangesAsync();

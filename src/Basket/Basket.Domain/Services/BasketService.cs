@@ -26,6 +26,7 @@ namespace Basket.Domain.Services
 
             foreach (var item in basket.Items)
             {
+                // Remove todos os Items do Carrinho
                 _itemRepository.Remove(item);
             }
 
