@@ -19,7 +19,7 @@ namespace Identity.Api.Controllers
             _mapper = mapper;
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("Get/{id}")]
         public async Task<ActionResult<UserViewModel>> Get(string id)
         {
             if (string.IsNullOrEmpty(id))
@@ -32,30 +32,25 @@ namespace Identity.Api.Controllers
             return Ok(_mapper.Map<UserViewModel>(user));
         }
 
-        [HttpPost]
-        public async Task<ActionResult> Post(CreateUserViewModel viewModel)
+        [HttpPost("Add")]
+        public async Task<ActionResult> Add(AddUserViewModel viewModel)
         {
             await _userService.InsertAsync(_mapper.Map<User>(viewModel));
             
             return Ok();
         }
 
-        [HttpPut]
-        public async Task<ActionResult> Put(UpdateUserViewModel viewModel)
+        [HttpPut("Alter")]
+        public async Task<ActionResult> Alter(AlterUserViewModel viewModel)
         {
             await _userService.UpdateAsync(_mapper.Map<User>(viewModel));
 
             return Ok();
         }
 
-        [HttpDelete("{id}")]
-        public async Task<ActionResult> Delete(string id)
+        [HttpDelete("Remove/{id}")]
+        public async Task<ActionResult> Remove(string id)
         {
-            if (string.IsNullOrEmpty(id))
-            {
-                return BadRequest();
-            }
-
             var user = await _userService.GetByIdAsync(id);
 
             await _userService.DeleteAsync(user);

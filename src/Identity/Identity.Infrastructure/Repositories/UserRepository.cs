@@ -26,6 +26,18 @@ namespace Identity.Infraestructure.Repositories
             }
         }
 
+        public async Task<User> GetUserByEmailAsync(string email)
+        {
+            try
+            {
+                return await _userManager.Users.FirstOrDefaultAsync(x => x.Email.Equals(email));
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
         public async Task InsertAsync(User user)
         {
             try
@@ -55,18 +67,6 @@ namespace Identity.Infraestructure.Repositories
             try
             {
                 await _userManager.DeleteAsync(user);
-            }
-            catch (Exception)
-            {
-                throw;
-            }
-        }
-
-        public async Task<User> GetUserByEmailAsync(string email)
-        {
-            try
-            {
-                return await _userManager.Users.FirstOrDefaultAsync(x => x.Email.Equals(email));
             }
             catch (Exception)
             {

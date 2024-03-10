@@ -21,16 +21,16 @@ namespace Identity.Application.AutoMapper
             CreateMap<User, UserViewModel>()
                 .ForMember(dto => dto.Name, opt => opt.MapFrom(entity => entity.UserName));
 
-            CreateMap<CreateUserViewModel, User>()
+            CreateMap<AddUserViewModel, User>()
                 .ForMember(entity => entity.UserName, opt => opt.MapFrom(dto => dto.Name))
                 .ForMember(entity => entity.PasswordHash, opt => opt.MapFrom(dto => dto.Password));
-            CreateMap<User, CreateUserViewModel>()
+            CreateMap<User, AddUserViewModel>()
                 .ForMember(dto => dto.Name, opt => opt.MapFrom(entity => entity.UserName));
 
-            CreateMap<UpdateUserViewModel, User>()
+            CreateMap<AlterUserViewModel, User>()
                 .ForMember(entity => entity.UserName, opt => opt.MapFrom(dto => dto.Name))
                 .ForMember(entity => entity.PasswordHash, opt => opt.MapFrom(dto => dto.Password));
-            CreateMap<User, UpdateUserViewModel>()
+            CreateMap<User, AlterUserViewModel>()
                 .ForMember(dto => dto.Name, opt => opt.MapFrom(entity => entity.UserName));
         }
     }

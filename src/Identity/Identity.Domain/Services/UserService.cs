@@ -18,6 +18,11 @@ namespace Identity.Domain.Services
             return await _repository.GetByIdAsync(id);
         }
 
+        public async Task<User> GetUserByEmailAsync(string email)
+        {
+            return await _repository.GetUserByEmailAsync(email);
+        }
+
         public async Task InsertAsync(User user)
         {
             await _repository.InsertAsync(user);
@@ -31,11 +36,6 @@ namespace Identity.Domain.Services
         public async Task DeleteAsync(User user)
         {
             await _repository.DeleteAsync(user);
-        }
-
-        public async Task<User> GetUserByEmailAsync(string email)
-        {
-            return await _repository.GetUserByEmailAsync(email);
         }
     }
 }

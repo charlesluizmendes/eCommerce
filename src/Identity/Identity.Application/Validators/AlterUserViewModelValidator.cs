@@ -3,10 +3,14 @@ using Identity.Application.ViewModels;
 
 namespace Identity.Application.Validators
 {
-    public class CreateUserViewModelValidator : AbstractValidator<CreateUserViewModel>
+    public class AlterUserViewModelValidator : AbstractValidator<AlterUserViewModel>
     {
-        public CreateUserViewModelValidator()
+        public AlterUserViewModelValidator()
         {
+            RuleFor(x => x.Id)
+                .NotEmpty().NotNull()
+                .WithMessage("O Id não pode ser nulo");
+
             RuleFor(x => x.Name)
                 .NotEmpty().NotNull()
                 .WithMessage("O Nome não pode ser nulo")
@@ -14,10 +18,10 @@ namespace Identity.Application.Validators
                 .WithMessage("O Nome deve possuir somente letras e não pode conter espaços");
 
             RuleFor(x => x.Email)
-                .NotEmpty().NotNull()
-                .WithMessage("O Email não pode ser nulo")
-                .EmailAddress()
-                .WithMessage("O Email é inválido");
+               .NotEmpty().NotNull()
+               .WithMessage("O Email não pode ser nulo")
+               .EmailAddress()
+               .WithMessage("O Email é inválido");
 
             RuleFor(x => x.Password)
                .NotEmpty().NotNull()

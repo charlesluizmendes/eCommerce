@@ -11,6 +11,7 @@ using Identity.Infraestructure.Options;
 using Identity.Infraestructure.Repositories;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -49,8 +50,8 @@ builder.Services.AddIdentity<User, IdentityRole>(options =>
 
 // FluentValidation
 
-builder.Services.AddValidatorsFromAssemblyContaining<CreateUserViewModelValidator>();
-builder.Services.AddValidatorsFromAssemblyContaining<UpdateUserViewModelValidator>();
+builder.Services.AddValidatorsFromAssemblyContaining<AddUserViewModelValidator>();
+builder.Services.AddValidatorsFromAssemblyContaining<AlterUserViewModelValidator>();
 builder.Services.AddValidatorsFromAssemblyContaining<CreateAccessTokenViewModelValidator>();
 builder.Services.AddFluentValidationAutoValidation();
 
@@ -59,7 +60,7 @@ builder.Services.AddFluentValidationAutoValidation();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
-    c.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo
+    c.SwaggerDoc("v1", new OpenApiInfo
     {
         Title = "Microservice Identity",
         Description = "Microservice of Identity",
