@@ -21,7 +21,7 @@ namespace Catalog.Api.Controllers
             _productService = _roductService;
         }
 
-        [HttpGet]
+        [HttpGet("Get")]
         public async Task<ActionResult<ProductViewModel>> Get()
         {
             var products = await _productService.GetListAsync();
@@ -29,14 +29,9 @@ namespace Catalog.Api.Controllers
             return Ok(_mapper.Map<List<ProductViewModel>>(products));
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("Get/{id}")]
         public async Task<ActionResult<ProductViewModel>> Get(int id)
         {
-            if (id <= 0)
-            {
-                return BadRequest();
-            }
-
             var product = await _productService.GetByIdAsync(id);
 
             return Ok(_mapper.Map<ProductViewModel>(product));

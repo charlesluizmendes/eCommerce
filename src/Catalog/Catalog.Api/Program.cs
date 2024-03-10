@@ -57,7 +57,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
-    c.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo
+    c.SwaggerDoc("v1", new OpenApiInfo
     {
         Title = "Microservice Catalog",
         Description = "Microservice of Catalog",

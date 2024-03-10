@@ -55,7 +55,7 @@ namespace Catalog.Infrastructure.Migrations
                         new
                         {
                             Id = 2,
-                            Description = "Refrigerante sabor Cola",
+                            Description = "Refrigerante Sabor Cola",
                             Name = "Refrigerante Pepsi",
                             Price = 5.0
                         });

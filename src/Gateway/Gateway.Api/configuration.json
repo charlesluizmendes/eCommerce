@@ -47,6 +47,30 @@
           "Port": 5006
         }
       ]
+    },
+    {
+      "UpstreamPathTemplate": "/api/product/get",
+      "UpstreamHttpMethod": [ "GET" ],
+      "DownstreamPathTemplate": "/api/product/get",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5004
+        }
+      ]
+    },
+    {
+      "UpstreamPathTemplate": "/api/product/get/{id}",
+      "UpstreamHttpMethod": [ "GET" ],
+      "DownstreamPathTemplate": "/api/product/get/{id}",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5004
+        }
+      ]
     }
   ],
   "GlobalConfiguration": {

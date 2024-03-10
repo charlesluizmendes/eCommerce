@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Catalog.Infrastructure.Migrations
 {
     [DbContext(typeof(CatalogContext))]
-    [Migration("20240305163429_Initial")]
+    [Migration("20240310002416_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -57,7 +57,7 @@ namespace Catalog.Infrastructure.Migrations
                         new
                         {
                             Id = 2,
-                            Description = "Refrigerante sabor Cola",
+                            Description = "Refrigerante Sabor Cola",
                             Name = "Refrigerante Pepsi",
                             Price = 5.0
                         });

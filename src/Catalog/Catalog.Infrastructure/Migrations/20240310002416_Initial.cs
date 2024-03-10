@@ -31,7 +31,7 @@ namespace Catalog.Infrastructure.Migrations
             migrationBuilder.InsertData(
                 table: "Product",
                 columns: new[] { "Id", "Description", "Name", "Price" },
-                values: new object[] { 2, "Refrigerante sabor Cola", "Refrigerante Pepsi", 5.0 });
+                values: new object[] { 2, "Refrigerante Sabor Cola", "Refrigerante Pepsi", 5.0 });
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
