@@ -19,7 +19,7 @@ namespace Basket.Infrastructure.Client
 
             try
             {
-                var response = await client.GetAsync($"api/Product/{id}");
+                var response = await client.GetAsync($"api/Product/Get/{id}");
                 var result = await response.Content.ReadAsStringAsync();
 
                 if (!response.IsSuccessStatusCode)

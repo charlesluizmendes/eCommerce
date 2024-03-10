@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Basket.Infrastructure.Migrations
 {
     [DbContext(typeof(BasketContext))]
-    [Migration("20240309223437_Initial")]
+    [Migration("20240310004752_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -35,7 +35,7 @@ namespace Basket.Infrastructure.Migrations
                     b.Property<bool>("Active")
                         .HasColumnType("bit");
 
-                    b.Property<double>("Amount")
+                    b.Property<double?>("Amount")
                         .HasColumnType("float");
 
                     b.Property<string>("UserId")

@@ -20,22 +20,8 @@ namespace Basket.Infrastructure.Repositories
             {
                 return await _context.Item
                         .Include(x => x.Basket)
-                        .Where(x => x.Id == id
-                                 && x.Active == true)
+                        .Where(item => item.Id == id && item.Active == true && item.Basket.Active == true)
                         .FirstOrDefaultAsync();
-            }
-            catch (Exception)
-            {
-                throw;
-            }
-        }
-
-        public async Task AddAsync(Item item)
-        {
-            try
-            {
-                item.Active = true;
-                await _context.Item.AddAsync(item);
             }
             catch (Exception)
             {
@@ -47,7 +33,6 @@ namespace Basket.Infrastructure.Repositories
         {
             try
             {
-                item.Active = false;
                 _context.Item.Update(item);
             }
             catch (Exception)

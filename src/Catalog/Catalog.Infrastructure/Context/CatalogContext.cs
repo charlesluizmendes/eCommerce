@@ -22,14 +22,16 @@ namespace Catalog.Infrastructure.Context
                     Id = 1,
                     Name = "Biscoito Trakinas",
                     Description = "Biscoito Recheado Sabor Morango",
-                    Price = 2.00
+                    Price = 2.00,
+                    Active = true
                 },
                 new Product
                 {
                     Id = 2,
                     Name = "Refrigerante Pepsi",
                     Description = "Refrigerante Sabor Cola",
-                    Price = 5.00
+                    Price = 5.00,
+                    Active = true
                 });
         } 
     }

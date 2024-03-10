@@ -29,6 +29,9 @@ namespace Catalog.Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
+                    b.Property<bool>("Active")
+                        .HasColumnType("bit");
+
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -48,6 +51,7 @@ namespace Catalog.Infrastructure.Migrations
                         new
                         {
                             Id = 1,
+                            Active = true,
                             Description = "Biscoito Recheado Sabor Morango",
                             Name = "Biscoito Trakinas",
                             Price = 2.0
@@ -55,6 +59,7 @@ namespace Catalog.Infrastructure.Migrations
                         new
                         {
                             Id = 2,
+                            Active = true,
                             Description = "Refrigerante Sabor Cola",
                             Name = "Refrigerante Pepsi",
                             Price = 5.0

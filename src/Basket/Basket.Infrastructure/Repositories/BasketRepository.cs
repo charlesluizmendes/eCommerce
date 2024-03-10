@@ -16,9 +16,8 @@ namespace Basket.Infrastructure.Repositories
         public async Task<Domain.Models.Basket> GetByIdAsync(int id)
         {
             return await _context.Basket
-                    .Include(x => x.Items)
-                    .Where(x => x.Id == id
-                             && x.Active == true)
+                    .Include(x => x.Items.Where(item => item.Active == true))
+                    .Where(basket => basket.Id == id && basket.Active == true)
                     .FirstOrDefaultAsync();
         }
 
@@ -27,9 +26,8 @@ namespace Basket.Infrastructure.Repositories
             try
             {
                 return await _context.Basket
-                    .Include(x => x.Items)
-                    .Where(x => x.UserId == userId 
-                             && x.Active == true)
+                    .Include(x => x.Items.Where(item => item.Active == true))
+                    .Where(basket => basket.UserId == userId && basket.Active == true)
                     .FirstOrDefaultAsync();
             }
             catch (Exception)
@@ -42,20 +40,7 @@ namespace Basket.Infrastructure.Repositories
         {
             try
             {
-                basket.Active = true;
                 await _context.Basket.AddAsync(basket);
-            }
-            catch (Exception)
-            {
-                throw;
-            }
-        }
-
-        public void Update(Domain.Models.Basket basket)
-        {
-            try
-            {
-                _context.Basket.Update(basket);
             }
             catch (Exception)
             {
@@ -67,7 +52,6 @@ namespace Basket.Infrastructure.Repositories
         {
             try
             {
-                basket.Active = false;
                 _context.Basket.Update(basket);
             }
             catch (Exception)

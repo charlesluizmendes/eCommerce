@@ -18,7 +18,9 @@ namespace Catalog.Infrastructure.Repositories
         {
             try
             {
-                return await _context.Product.ToListAsync();
+                return await _context.Product.
+                    Where(x => x.Active == true)
+                    .ToListAsync();
             }
             catch (Exception)
             {
@@ -30,7 +32,9 @@ namespace Catalog.Infrastructure.Repositories
         {
             try
             {
-                return await _context.Product.FindAsync(id);
+                return await _context.Product
+                    .Where(x => x.Active == true)
+                    .FirstOrDefaultAsync(x => x.Id == id);
             }
             catch (Exception)
             {

@@ -40,10 +40,11 @@ namespace Basket.Domain.Services
                     Items = new List<Item>()
                 };
 
+                basket.Active = true;
                 await _basketRepository.AddAsync(basket);
             }
 
-            var item_ = basket.Items.FirstOrDefault(x => x.ProductId == item.ProductId);
+            var item_ = basket.Items.FirstOrDefault(x => x.ProductId == item.ProductId && x.Active == true);
 
             // Verificar se o item já existe no carrinho
             if (item_ != null)
@@ -54,19 +55,19 @@ namespace Basket.Domain.Services
             else
             {
                 // Se o item não existir, crie um novo item e adicione ao carrinho
-                item.BasketId = basket.Id;
-                await _repository.AddAsync(item);
+                item.Active = true;
+                basket.Items.Add(item);
             }
 
             // Atualiza o valor total do Carrinho
-            basket.Amount = basket.Items.Sum(x => x.Quantity * x.Price).Value;
+            var activeItems = basket.Items.Where(x => x.Active == true).ToList();
+            basket.Amount = activeItems.Sum(x => x?.Quantity * x?.Price);
 
             await _repository.SaveChangesAsync();
         }
 
         public async Task RemoveFromBasketAsync(int id)
         {
-            // Verificar se o usuário já possui um carrinho
             var item = await _repository.GetByIdAsync(id);
 
             if (item != null)
@@ -79,22 +80,24 @@ namespace Basket.Domain.Services
                 else
                 {
                     // Remove o Item
+                    item.Active = false;
                     _repository.Remove(item);
                 }
 
+                var basket = await _basketRepository.GetByUserIdAsync(item.Basket.UserId);
+
+                // Atualiza o valor total do Carrinho
+                var activeItems = basket.Items.Where(x => x.Active == true).ToList();
+                basket.Amount = activeItems.Sum(x => x?.Quantity * x?.Price);
+
                 // Verifique se o carrinho está vazio
-                if (item.Basket.Items.Count == 0)
+                if (activeItems.Count == 0)
                 {
                     // Remove o Carrinho
-                    _basketRepository.Remove(item.Basket);
-                }
-                else 
-                {
-                    // Atualiza o valor total do Carrinho
-                    item.Basket.Amount = item.Basket.Items.Sum(x => x.Quantity * x.Price).Value;
+                    basket.Active = false; 
+                    _basketRepository.Remove(basket);
                 }
 
-                // Salve as alterações no banco de dados
                 await _repository.SaveChangesAsync();
             }
         }

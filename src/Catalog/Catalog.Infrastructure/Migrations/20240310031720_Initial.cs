@@ -16,7 +16,8 @@ namespace Catalog.Infrastructure.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Price = table.Column<double>(type: "float", nullable: false)
+                    Price = table.Column<double>(type: "float", nullable: false),
+                    Active = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -25,13 +26,13 @@ namespace Catalog.Infrastructure.Migrations
 
             migrationBuilder.InsertData(
                 table: "Product",
-                columns: new[] { "Id", "Description", "Name", "Price" },
-                values: new object[] { 1, "Biscoito Recheado Sabor Morango", "Biscoito Trakinas", 2.0 });
+                columns: new[] { "Id", "Active", "Description", "Name", "Price" },
+                values: new object[] { 1, true, "Biscoito Recheado Sabor Morango", "Biscoito Trakinas", 2.0 });
 
             migrationBuilder.InsertData(
                 table: "Product",
-                columns: new[] { "Id", "Description", "Name", "Price" },
-                values: new object[] { 2, "Refrigerante Sabor Cola", "Refrigerante Pepsi", 5.0 });
+                columns: new[] { "Id", "Active", "Description", "Name", "Price" },
+                values: new object[] { 2, true, "Refrigerante Sabor Cola", "Refrigerante Pepsi", 5.0 });
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)

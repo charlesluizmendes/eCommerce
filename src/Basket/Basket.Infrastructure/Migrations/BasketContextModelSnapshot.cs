@@ -33,7 +33,7 @@ namespace Basket.Infrastructure.Migrations
                     b.Property<bool>("Active")
                         .HasColumnType("bit");
 
-                    b.Property<double>("Amount")
+                    b.Property<double?>("Amount")
                         .HasColumnType("float");
 
                     b.Property<string>("UserId")
