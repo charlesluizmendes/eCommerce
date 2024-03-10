@@ -20,7 +20,7 @@ namespace Basket.Infrastructure.Repositories
             {
                 return await _context.Item
                         .Include(x => x.Basket)
-                        .Where(item => item.Id == id && item.Active == true && item.Basket.Active == true)
+                        .Where(item => item.Id == id && item.Active && item.Basket.Active)
                         .FirstOrDefaultAsync();
             }
             catch (Exception)
@@ -29,7 +29,7 @@ namespace Basket.Infrastructure.Repositories
             }
         }
 
-        public void Remove(Item item)
+        public void Update(Item item)
         {
             try
             {

@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Basket.Api.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class BasketController : ControllerBase

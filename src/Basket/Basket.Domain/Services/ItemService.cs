@@ -37,20 +37,20 @@ namespace Basket.Domain.Services
                 basket = new Models.Basket
                 {
                     UserId = item.Basket.UserId,
-                    Items = new List<Item>()
+                    Items = new List<Item>(),
+                    Active = true
                 };
 
-                basket.Active = true;
                 await _basketRepository.AddAsync(basket);
             }
 
-            var item_ = basket.Items.FirstOrDefault(x => x.ProductId == item.ProductId && x.Active == true);
+            var existingItem = basket.Items.FirstOrDefault(x => x.ProductId == item.ProductId && x.Active);
 
             // Verificar se o item já existe no carrinho
-            if (item_ != null)
+            if (existingItem != null)
             {
                 // Se o item já existir, apenas atualize a quantidade
-                item_.Quantity += item.Quantity;
+                existingItem.Quantity += item.Quantity;
             }
             else
             {
@@ -60,9 +60,10 @@ namespace Basket.Domain.Services
             }
 
             // Atualiza o valor total do Carrinho
-            var activeItems = basket.Items.Where(x => x.Active == true).ToList();
+            var activeItems = basket.Items.Where(x => x.Active).ToList();
             basket.Amount = activeItems.Sum(x => x?.Quantity * x?.Price);
 
+            // Salva as alterações
             await _repository.SaveChangesAsync();
         }
 
@@ -70,6 +71,7 @@ namespace Basket.Domain.Services
         {
             var item = await _repository.GetByIdAsync(id);
 
+            // Verifica se o Item existe
             if (item != null)
             {
                 // Remove a Quantidade do Item
@@ -81,13 +83,13 @@ namespace Basket.Domain.Services
                 {
                     // Remove o Item
                     item.Active = false;
-                    _repository.Remove(item);
+                    _repository.Update(item);
                 }
 
                 var basket = await _basketRepository.GetByUserIdAsync(item.Basket.UserId);
 
                 // Atualiza o valor total do Carrinho
-                var activeItems = basket.Items.Where(x => x.Active == true).ToList();
+                var activeItems = basket.Items.Where(x => x.Active).ToList();
                 basket.Amount = activeItems.Sum(x => x?.Quantity * x?.Price);
 
                 // Verifique se o carrinho está vazio
@@ -95,9 +97,10 @@ namespace Basket.Domain.Services
                 {
                     // Remove o Carrinho
                     basket.Active = false; 
-                    _basketRepository.Remove(basket);
+                    _basketRepository.Update(basket);
                 }
 
+                // Salva as alterações
                 await _repository.SaveChangesAsync();
             }
         }

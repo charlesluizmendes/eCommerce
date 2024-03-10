@@ -16,8 +16,8 @@ namespace Basket.Infrastructure.Repositories
         public async Task<Domain.Models.Basket> GetByIdAsync(int id)
         {
             return await _context.Basket
-                    .Include(x => x.Items.Where(item => item.Active == true))
-                    .Where(basket => basket.Id == id && basket.Active == true)
+                    .Include(x => x.Items.Where(item => item.Active))
+                    .Where(basket => basket.Id == id && basket.Active)
                     .FirstOrDefaultAsync();
         }
 
@@ -26,8 +26,8 @@ namespace Basket.Infrastructure.Repositories
             try
             {
                 return await _context.Basket
-                    .Include(x => x.Items.Where(item => item.Active == true))
-                    .Where(basket => basket.UserId == userId && basket.Active == true)
+                    .Include(x => x.Items.Where(item => item.Active))
+                    .Where(basket => basket.UserId == userId && basket.Active)
                     .FirstOrDefaultAsync();
             }
             catch (Exception)
@@ -48,7 +48,7 @@ namespace Basket.Infrastructure.Repositories
             }
         }
 
-        public void Remove(Domain.Models.Basket basket)
+        public void Update(Domain.Models.Basket basket)
         {
             try
             {

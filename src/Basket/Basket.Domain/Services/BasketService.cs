@@ -24,18 +24,21 @@ namespace Basket.Domain.Services
         {
             var basket = await _repository.GetByIdAsync(id);
 
-            foreach (var item in basket.Items)
+            if (basket != null) 
             {
-                // Remove todos os Items do Carrinho
-                item.Active = false;
-                _itemRepository.Remove(item);
+                foreach (var item in basket.Items)
+                {
+                    // Remove todos os Items do Carrinho
+                    item.Active = false;
+                    _itemRepository.Update(item);
+                }
+
+                basket.Amount = 0;
+                basket.Active = false;
+                _repository.Update(basket);
+
+                await _repository.SaveChangesAsync();
             }
-
-            basket.Amount = 0;
-            basket.Active = false;
-            _repository.Remove(basket);
-
-            await _repository.SaveChangesAsync();
         }
     }
 }

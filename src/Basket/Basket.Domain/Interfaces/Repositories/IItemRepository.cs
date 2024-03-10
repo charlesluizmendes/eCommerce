@@ -5,7 +5,7 @@ namespace Basket.Domain.Interfaces.Repositories
     public interface IItemRepository
     {
         Task<Item> GetByIdAsync(int id);
-        void Remove(Item item);
+        void Update(Item item);
         Task SaveChangesAsync();
     }
 }
