@@ -24,10 +24,7 @@ namespace Payment.Api.Controllers
         [HttpPost("Card")]
         public async Task<ActionResult> Card(CreatePaymentCardViewModel viewModel)
         {
-            var payment = await _paymentService.CreatePaymentAsync(_mapper.Map<Domain.Models.Payment>(viewModel));
-
-            if (!payment)
-                return BadRequest();
+            await _paymentService.CreatePaymentAsync(_mapper.Map<Domain.Models.Payment>(viewModel));
 
             return Ok();
         }
@@ -35,10 +32,7 @@ namespace Payment.Api.Controllers
         [HttpPost("Pix")]
         public async Task<ActionResult> Pix(CreatePaymentPixViewModel viewModel)
         {
-            var payment = await _paymentService.CreatePaymentAsync(_mapper.Map<Domain.Models.Payment>(viewModel));
-
-            if (!payment)
-                return BadRequest();
+            await _paymentService.CreatePaymentAsync(_mapper.Map<Domain.Models.Payment>(viewModel));
 
             return Ok();
         }

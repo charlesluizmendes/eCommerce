@@ -23,25 +23,19 @@ namespace Identity.Domain.Services
             return await _repository.GetUserByEmailAsync(email);
         }
 
-        public async Task<bool> InsertAsync(User user)
+        public async Task InsertAsync(User user)
         {
             await _repository.InsertAsync(user);
-
-            return true;
         }
 
-        public async Task<bool> UpdateAsync(User user)
+        public async Task UpdateAsync(User user)
         {
             await _repository.UpdateAsync(user);
-
-            return true;
         }
 
-        public async Task<bool> DeleteAsync(User user)
+        public async Task DeleteAsync(User user)
         {
             await _repository.DeleteAsync(user);
-
-            return true;
         }
     }
 }

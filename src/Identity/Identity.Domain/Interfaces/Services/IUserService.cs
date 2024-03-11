@@ -6,8 +6,8 @@ namespace Identity.Domain.Interfaces.Services
     {
         Task<User> GetByIdAsync(string id);
         Task<User> GetUserByEmailAsync(string email);
-        Task<bool> InsertAsync(User user);
-        Task<bool> UpdateAsync(User user);
-        Task<bool> DeleteAsync(User user);
+        Task InsertAsync(User user);
+        Task UpdateAsync(User user);
+        Task DeleteAsync(User user);
     }
 }

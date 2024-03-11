@@ -25,10 +25,7 @@ namespace Basket.Api.Controllers
         [HttpPost("Add")]
         public async Task<ActionResult> Add(AddItemViewModel viewModel)
         {
-            var add = await _itemService.AddToBasketAsync(_mapper.Map<Item>(viewModel));
-
-            if (!add)
-                return BadRequest();
+            await _itemService.AddToBasketAsync(_mapper.Map<Item>(viewModel));
 
             return Ok();
         }
@@ -36,10 +33,7 @@ namespace Basket.Api.Controllers
         [HttpDelete("Remove/{id}")]
         public async Task<ActionResult> Remove(int id)
         {
-            var remove = await _itemService.RemoveFromBasketAsync(id);
-
-            if (!remove)
-                return BadRequest();    
+            await _itemService.RemoveFromBasketAsync(id);  
 
             return Ok();
         }

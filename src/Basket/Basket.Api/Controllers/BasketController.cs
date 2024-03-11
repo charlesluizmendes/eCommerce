@@ -32,10 +32,7 @@ namespace Basket.Api.Controllers
         [HttpDelete("Remove/{id}")]
         public async Task<ActionResult> Remove(int id)
         {
-            var remove = await _basketService.RemoveAsync(id);
-
-            if (!remove)
-                return BadRequest();
+            await _basketService.RemoveAsync(id);
 
             return Ok();
         }

@@ -30,18 +30,18 @@ namespace Payment.Domain.Services
             _eventBus = eventBus;
         }
 
-        public async Task<bool> CreatePaymentAsync(Models.Payment payment)
+        public async Task CreatePaymentAsync(Models.Payment payment)
         {
             var basket = await _client.GetBaskeAsync();
 
             if (basket == null)
-                return false;
+                return;
 
             var payment_ = await _repository.GetByBasketIdAsync(basket.Id);
 
             // Verifica se o Pagamento ja foi criado
             if (payment_ != null)
-                return false;
+                return;
 
             payment.UserId = basket.UserId;
             payment.BasketId = basket.Id;
@@ -96,7 +96,7 @@ namespace Payment.Domain.Services
                 _transactionRepository.Update(transaction);
                 await _transactionRepository.SaveChangesAsync();
 
-                return false;
+                return;
             }
             
             // Atualiza a Transação para 'Aprovada'
@@ -113,8 +113,6 @@ namespace Payment.Domain.Services
                 PaymentId = payment.Id,
                 Basket = basket
             });
-
-            return true;
         }
 
         #region Private Methods

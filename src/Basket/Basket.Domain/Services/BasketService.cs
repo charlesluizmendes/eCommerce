@@ -30,7 +30,7 @@ namespace Basket.Domain.Services
             return _repository.GetByUserIdAsync(userId);
         }
 
-        public async Task<bool> RemoveAsync(int id)
+        public async Task RemoveAsync(int id)
         {
             var basket = await _repository.GetByIdAsync(id);
 
@@ -38,7 +38,7 @@ namespace Basket.Domain.Services
             {
                 _context.AddNotification("Não foi encontrado nenhum Carrinho");
 
-                return false;
+                return;
             }
 
             foreach (var item in basket.Items)
@@ -55,8 +55,6 @@ namespace Basket.Domain.Services
             _repository.Update(basket);
 
             await _repository.SaveChangesAsync();
-
-            return true;
         }
     }
 }

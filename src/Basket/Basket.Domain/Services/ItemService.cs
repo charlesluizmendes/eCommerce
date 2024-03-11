@@ -28,7 +28,7 @@ namespace Basket.Domain.Services
             _client = client;
         }
 
-        public async Task<bool> AddToBasketAsync(Item item)
+        public async Task AddToBasketAsync(Item item)
         {
             var product = await _client.GetProductByIdAsync(item.ProductId);
 
@@ -36,7 +36,7 @@ namespace Basket.Domain.Services
             {
                 _context.AddNotification("Não foi encontrado nenhum Produto");
 
-                return false;
+                return;
             }
 
             item.Name = product.Name;
@@ -81,11 +81,9 @@ namespace Basket.Domain.Services
 
             // Salva as alterações
             await _repository.SaveChangesAsync();
-
-            return true;
         }
 
-        public async Task<bool> RemoveFromBasketAsync(int id)
+        public async Task RemoveFromBasketAsync(int id)
         {
             var item = await _repository.GetByIdAsync(id);
 
@@ -94,7 +92,7 @@ namespace Basket.Domain.Services
             {
                 _context.AddNotification("Não foi encontrado nenhum Item");
 
-                return false; 
+                return; 
             }
 
             // Remove a Quantidade do Item
@@ -126,8 +124,6 @@ namespace Basket.Domain.Services
 
             // Salva as alterações
             await _repository.SaveChangesAsync();
-
-            return true;
         }
     }
 }
