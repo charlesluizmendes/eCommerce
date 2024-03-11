@@ -1,4 +1,6 @@
+using Basket.Infrastructure.Identity;
 using Catalog.Application.AutoMapper;
+using Catalog.Domain.Interfaces.Identity;
 using Catalog.Domain.Interfaces.Repositories;
 using Catalog.Domain.Interfaces.Services;
 using Catalog.Domain.Services;
@@ -18,6 +20,9 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddTransient<IProductService, ProductService>();
 builder.Services.AddTransient<IProductRepository, ProductRepository>();
+builder.Services.AddTransient<IUserIdentity, UserIdentity>();
+
+builder.Services.AddHttpContextAccessor();
 
 // AutoMapper
 

@@ -35,15 +35,21 @@ namespace Identity.Api.Controllers
         [HttpPost("Add")]
         public async Task<ActionResult> Add(AddUserViewModel viewModel)
         {
-            await _userService.InsertAsync(_mapper.Map<User>(viewModel));
+            var add = await _userService.InsertAsync(_mapper.Map<User>(viewModel));
             
+            if (add)
+                return BadRequest();
+
             return Ok();
         }
 
         [HttpPut("Alter")]
         public async Task<ActionResult> Alter(AlterUserViewModel viewModel)
         {
-            await _userService.UpdateAsync(_mapper.Map<User>(viewModel));
+            var alter = await _userService.UpdateAsync(_mapper.Map<User>(viewModel));
+
+            if (!alter)
+                return BadRequest();
 
             return Ok();
         }
@@ -53,7 +59,13 @@ namespace Identity.Api.Controllers
         {
             var user = await _userService.GetByIdAsync(id);
 
-            await _userService.DeleteAsync(user);
+            if (user == null)
+                return NotFound();
+
+            var delete = await _userService.DeleteAsync(user);
+
+            if (delete)
+                return BadRequest();
 
             return Ok();
         }

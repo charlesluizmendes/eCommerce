@@ -4,7 +4,7 @@ namespace Payment.Domain.Interfaces.Client
 {
     public interface IBasketClient
     {
-        Task<Basket> GetBasketByUserIdAsync(string userId);
+        Task<Basket> GetBaskeAsync();
         Task RemoveBasketByIdAsync(int id);
     }
 }

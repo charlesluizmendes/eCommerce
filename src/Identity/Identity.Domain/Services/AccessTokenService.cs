@@ -1,4 +1,5 @@
-﻿using Identity.Domain.Interfaces.Repositories;
+﻿using Identity.Domain.Interfaces.Identity;
+using Identity.Domain.Interfaces.Repositories;
 using Identity.Domain.Interfaces.Services;
 using Identity.Domain.Models;
 using Microsoft.AspNetCore.Identity;
@@ -7,13 +8,13 @@ namespace Identity.Domain.Services
 {
     public class AccessTokenService : IAccessTokenService
     {
-        private readonly IAccessTokenRepository _repository;
+        private readonly IUserIdentity _identity;
         private readonly IUserService _userService;
 
-        public AccessTokenService(IAccessTokenRepository repository,
+        public AccessTokenService(IUserIdentity identity,
             IUserService userService)
         {
-            _repository = repository;
+            _identity = identity;
             _userService = userService;
         }
 
@@ -27,7 +28,7 @@ namespace Identity.Domain.Services
             var result = VerifyHashedPassword(_user, _user.PasswordHash, user.PasswordHash);
 
             if (result)
-                return await _repository.CreateTokenByEmailAsync(_user.Email);
+                return await _identity.CreateTokenByUserIdAsync(_user.Id);
             else 
                 return null;
         }

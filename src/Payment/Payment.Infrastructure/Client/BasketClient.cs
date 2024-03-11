@@ -1,6 +1,5 @@
 ﻿using Newtonsoft.Json;
 using Payment.Domain.Interfaces.Client;
-using Payment.Domain.Models;
 
 namespace Payment.Infrastructure.Client
 {
@@ -13,19 +12,19 @@ namespace Payment.Infrastructure.Client
             _httpClientFactory = httpClientFactory;
         }        
 
-        public async Task<Basket> GetBasketByUserIdAsync(string userId)
+        public async Task<Domain.Models.Basket> GetBaskeAsync()
         {
             var client = _httpClientFactory.CreateClient("Basket");
 
             try
             {
-                var response = await client.GetAsync($"api/Basket/Get/{userId}");
+                var response = await client.GetAsync($"api/Basket/Get");
                 var result = await response.Content.ReadAsStringAsync();
 
                 if (!response.IsSuccessStatusCode)
                     return null;
 
-                return JsonConvert.DeserializeObject<Basket>(result);
+                return JsonConvert.DeserializeObject<Domain.Models.Basket>(result);
             }
             catch (Exception)
             {

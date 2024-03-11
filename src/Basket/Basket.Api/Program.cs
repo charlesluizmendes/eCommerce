@@ -17,6 +17,8 @@ using Basket.Infrastructure.Client;
 using FluentValidation.AspNetCore;
 using FluentValidation;
 using Basket.Application.Validators;
+using Basket.Domain.Interfaces.Identity;
+using Basket.Infrastructure.Identity;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -27,6 +29,7 @@ builder.Services.AddTransient<IBasketRepository, BasketRepository>();
 builder.Services.AddTransient<IItemService, ItemService>();
 builder.Services.AddTransient<IItemRepository, ItemRepository>();
 builder.Services.AddTransient<ICatalogClient, CatalogClient>();
+builder.Services.AddTransient<IUserIdentity, UserIdentity>();
 
 builder.Services.AddTransient<CatalogHttpClientHandler>();
 builder.Services.AddHttpContextAccessor();

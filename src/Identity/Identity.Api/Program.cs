@@ -2,6 +2,7 @@ using FluentValidation;
 using FluentValidation.AspNetCore;
 using Identity.Application.AutoMapper;
 using Identity.Application.Validators;
+using Identity.Domain.Interfaces.Identity;
 using Identity.Domain.Interfaces.Repositories;
 using Identity.Domain.Interfaces.Services;
 using Identity.Domain.Models;
@@ -9,6 +10,7 @@ using Identity.Domain.Services;
 using Identity.Infraestructure.Context;
 using Identity.Infraestructure.Options;
 using Identity.Infraestructure.Repositories;
+using Identity.Infrastructure.Identity;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
@@ -19,8 +21,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddTransient<IAccessTokenService, AccessTokenService>();
 builder.Services.AddTransient<IUserService, UserService>();
-builder.Services.AddTransient<IAccessTokenRepository, AccessTokenRepository>();
 builder.Services.AddTransient<IUserRepository, UserRepository>();
+builder.Services.AddTransient<IUserIdentity, UserIdentity>();
 
 // AutoMapper
 

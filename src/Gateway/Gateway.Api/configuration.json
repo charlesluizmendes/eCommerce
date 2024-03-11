@@ -1,9 +1,9 @@
 {
   "Routes": [
     {
-      "UpstreamPathTemplate": "/api/basket/get/{userid}",
+      "UpstreamPathTemplate": "/api/basket/get",
       "UpstreamHttpMethod": [ "GET" ],
-      "DownstreamPathTemplate": "/api/basket/get/{userid}",
+      "DownstreamPathTemplate": "/api/basket/get",
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {

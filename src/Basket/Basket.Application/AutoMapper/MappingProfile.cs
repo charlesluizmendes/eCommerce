@@ -12,11 +12,7 @@ namespace Basket.Application.AutoMapper
                 .ConstructUsing(src => new Item()
                 {
                     Quantity = src.Quantity,
-                    ProductId = src.ProductId,
-                    Basket = new Domain.Models.Basket()
-                    {
-                        UserId = src.UserId
-                    }
+                    ProductId = src.ProductId
                 });
 
             CreateMap<Domain.Models.Basket, BasketViewModel>();

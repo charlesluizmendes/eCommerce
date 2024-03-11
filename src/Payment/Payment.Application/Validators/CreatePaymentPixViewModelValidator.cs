@@ -7,10 +7,6 @@ namespace Payment.Application.Validators
     {
         public CreatePaymentPixViewModelValidator()
         {
-            RuleFor(x => x.UserId)
-                .NotEmpty().NotNull()
-               .WithMessage("O UserId não pode ser nulo");
-
             RuleFor(x => x.Key)
                 .NotEmpty().NotNull()
                .WithMessage("A Key não pode ser nula");

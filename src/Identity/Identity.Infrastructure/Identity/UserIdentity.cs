@@ -1,4 +1,4 @@
-﻿using Identity.Domain.Interfaces.Repositories;
+﻿using Identity.Domain.Interfaces.Identity;
 using Identity.Domain.Models;
 using Identity.Infraestructure.Options;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -8,28 +8,28 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 
-namespace Identity.Infraestructure.Repositories
+namespace Identity.Infrastructure.Identity
 {
-    public class AccessTokenRepository : IAccessTokenRepository
+    public class UserIdentity : IUserIdentity
     {
         private readonly string _secret;
         private readonly string _iss;
         private readonly string _aud;
 
-        public AccessTokenRepository(IOptions<AccessTokenConfiguration> audienceOptions)
+        public UserIdentity(IOptions<AccessTokenConfiguration> audienceOptions)
         {
             _secret = audienceOptions.Value.Secret;
             _iss = audienceOptions.Value.Iss;
             _aud = audienceOptions.Value.Aud;
         }
 
-        public async Task<AccessToken> CreateTokenByEmailAsync(string email)
+        public async Task<AccessToken> CreateTokenByUserIdAsync(string userId)
         {
             try
             {
                 var claims = new[]
                 {
-                     new Claim(ClaimTypes.Email, email),
+                     new Claim(ClaimTypes.NameIdentifier, userId),
                 };
 
                 var key = new SymmetricSecurityKey(

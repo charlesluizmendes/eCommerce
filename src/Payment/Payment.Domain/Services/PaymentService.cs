@@ -32,7 +32,7 @@ namespace Payment.Domain.Services
 
         public async Task<bool> CreatePaymentAsync(Models.Payment payment)
         {
-            var basket = await _client.GetBasketByUserIdAsync(payment.UserId);
+            var basket = await _client.GetBaskeAsync();
 
             if (basket == null)
                 return false;
@@ -43,6 +43,7 @@ namespace Payment.Domain.Services
             if (payment_ != null)
                 return false;
 
+            payment.UserId = basket.UserId;
             payment.BasketId = basket.Id;
             payment.Amount = basket.Amount;
 

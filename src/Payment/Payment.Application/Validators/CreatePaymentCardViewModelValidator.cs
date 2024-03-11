@@ -7,10 +7,6 @@ namespace Payment.Application.Validators
     {
         public CreatePaymentCardViewModelValidator()
         {
-            RuleFor(x => x.UserId)
-                .NotEmpty().NotNull()
-               .WithMessage("O UserId não pode ser nulo");
-
             RuleFor(x => x.ClientName)
                 .NotEmpty().NotNull()
                .WithMessage("O ClientName não pode ser nulo");

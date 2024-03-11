@@ -14,10 +14,6 @@ namespace Basket.Application.Validators
             RuleFor(x => x.ProductId)
                 .GreaterThan(0)
                 .WithMessage("O ProductId deve ser maior que 0");
-
-            RuleFor(x => x.UserId)
-                .NotNull().NotEmpty()
-                .WithMessage("O ProductId não pode ser nulo ou vazio");
         }
     }
 }

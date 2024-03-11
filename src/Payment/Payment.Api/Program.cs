@@ -20,6 +20,8 @@ using Polly;
 using Polly.Extensions.Http;
 using System.Text;
 using Payment.Application.AutoMapper;
+using Payment.Domain.Interfaces.Identity;
+using Basket.Infrastructure.Identity;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -32,6 +34,7 @@ builder.Services.AddTransient<ICardRepository, CardRepository>();
 builder.Services.AddTransient<IPixRepository, PixRepository>();
 builder.Services.AddTransient<ITransactionRepository, TransactionRepository>();
 builder.Services.AddTransient<IPaymentService, PaymentService>();
+builder.Services.AddTransient<IUserIdentity, UserIdentity>();
 
 builder.Services.AddTransient<BasketHttpClientHandler>();
 builder.Services.AddHttpContextAccessor();

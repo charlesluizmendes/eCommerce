@@ -11,7 +11,6 @@ namespace Payment.Application.AutoMapper
             CreateMap<CreatePaymentCardViewModel, Domain.Models.Payment>()
                 .ConstructUsing(src => new Domain.Models.Payment()
                 {
-                    UserId = src.UserId,
                     Card = new Card()
                     {
                         ClientName = src.ClientName,
@@ -24,7 +23,6 @@ namespace Payment.Application.AutoMapper
             CreateMap<CreatePaymentPixViewModel, Domain.Models.Payment>()
                 .ConstructUsing(src => new Domain.Models.Payment()
                 {
-                    UserId = src.UserId,
                     Pix = new Pix()
                     {
                         Key = src.Key

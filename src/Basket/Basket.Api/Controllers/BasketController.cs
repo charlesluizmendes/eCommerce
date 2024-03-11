@@ -21,10 +21,10 @@ namespace Basket.Api.Controllers
             _basketService = basketService;
         }
 
-        [HttpGet("Get/{userId}")]
-        public async Task<ActionResult<BasketViewModel>> Get(string userId)
+        [HttpGet("Get")]
+        public async Task<ActionResult<BasketViewModel>> Get()
         {
-            var basket = await _basketService.GetByUserIdAsync(userId);
+            var basket = await _basketService.GetAsync();
 
             return Ok(_mapper.Map<BasketViewModel>(basket));
         }
@@ -32,7 +32,10 @@ namespace Basket.Api.Controllers
         [HttpDelete("Remove/{id}")]
         public async Task<ActionResult> Remove(int id)
         {
-            await _basketService.RemoveAsync(id);
+            var remove = await _basketService.RemoveAsync(id);
+
+            if (!remove)
+                return BadRequest();
 
             return Ok();
         }
