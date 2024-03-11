@@ -24,9 +24,9 @@ namespace Basket.Domain.Services
         {
             var product = await _client.GetProductByIdAsync(item.ProductId);
 
-            item.Name = product?.Name;
-            item.Description = product?.Description;
-            item.Price = product?.Price;
+            item.Name = product.Name;
+            item.Description = product.Description;
+            item.Price = product.Price;
 
             var basket = await _basketRepository.GetByUserIdAsync(item.Basket.UserId);
 
@@ -61,7 +61,7 @@ namespace Basket.Domain.Services
 
             // Atualiza o valor total do Carrinho
             var activeItems = basket.Items.Where(x => x.Active).ToList();
-            basket.Amount = activeItems.Sum(x => x?.Quantity * x?.Price);
+            basket.Amount = activeItems.Sum(x => x.Quantity * x.Price);
 
             // Salva as alterações
             await _repository.SaveChangesAsync();
@@ -90,7 +90,7 @@ namespace Basket.Domain.Services
 
                 // Atualiza o valor total do Carrinho
                 var activeItems = basket.Items.Where(x => x.Active).ToList();
-                basket.Amount = activeItems.Sum(x => x?.Quantity * x?.Price);
+                basket.Amount = activeItems.Sum(x => x.Quantity * x.Price);
 
                 // Verifique se o carrinho está vazio
                 if (activeItems.Count == 0)

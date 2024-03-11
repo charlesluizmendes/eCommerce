@@ -32,7 +32,6 @@ namespace Payment.Infrastructure.Repositories
             try
             {
                 await _context.Transaction.AddAsync(transaction);
-                await _context.SaveChangesAsync();
             }
             catch (Exception)
             {
@@ -40,11 +39,22 @@ namespace Payment.Infrastructure.Repositories
             }
         }
 
-        public async Task UpdateAsync(Transaction transaction)
+        public void Update(Transaction transaction)
         {
             try
             {
                 _context.Update(transaction);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        public async Task SaveChangesAsync()
+        {
+            try
+            {
                 await _context.SaveChangesAsync();
             }
             catch (Exception)

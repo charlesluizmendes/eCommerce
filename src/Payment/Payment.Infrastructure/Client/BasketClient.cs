@@ -19,7 +19,7 @@ namespace Payment.Infrastructure.Client
 
             try
             {
-                var response = await client.GetAsync($"api/Basket/{userId}");
+                var response = await client.GetAsync($"api/Basket/Get/{userId}");
                 var result = await response.Content.ReadAsStringAsync();
 
                 if (!response.IsSuccessStatusCode)
@@ -33,13 +33,13 @@ namespace Payment.Infrastructure.Client
             }
         }
 
-        public async Task DeleteBasketByUserIdAsync(string userId)
+        public async Task RemoveBasketByIdAsync(int id)
         {
             var client = _httpClientFactory.CreateClient("Basket");
 
             try
             {
-                await client.DeleteAsync($"api/Basket/{userId}");                
+                await client.DeleteAsync($"api/Basket/Remove/{id}");                
             }
             catch (Exception)
             {

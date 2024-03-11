@@ -16,11 +16,10 @@ using Payment.Infrastructure.EventBus;
 using Payment.Infrastructure.Options;
 using Payment.Infrastructure.Repositories;
 using Payment.Application.Validators;
-using Payment.Application.Interface;
-using Payment.Application.Service;
 using Polly;
 using Polly.Extensions.Http;
 using System.Text;
+using Payment.Application.AutoMapper;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -29,13 +28,17 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddTransient<IBasketClient, BasketClient>();
 builder.Services.AddTransient<IOrderEventBus, OrderEventBus>();
 builder.Services.AddTransient<IPaymentRepository, PaymentRepository>();
+builder.Services.AddTransient<ICardRepository, CardRepository>();
+builder.Services.AddTransient<IPixRepository, PixRepository>();
 builder.Services.AddTransient<ITransactionRepository, TransactionRepository>();
 builder.Services.AddTransient<IPaymentService, PaymentService>();
-builder.Services.AddTransient<ITransactionService, TransactionService>();
-builder.Services.AddTransient<IPaymentAppService, PaymentAppService>();
 
 builder.Services.AddTransient<BasketHttpClientHandler>();
 builder.Services.AddHttpContextAccessor();
+
+// AutoMapper
+
+builder.Services.AddAutoMapper(typeof(MappingProfile));
 
 // Context
 

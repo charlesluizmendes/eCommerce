@@ -131,6 +131,30 @@
           "Port": 5002
         }
       ]
+    },
+    {
+      "UpstreamPathTemplate": "/api/payment/card",
+      "UpstreamHttpMethod": [ "POST" ],
+      "DownstreamPathTemplate": "/api/payment/card",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5008
+        }
+      ]
+    },
+    {
+      "UpstreamPathTemplate": "/api/payment/pix",
+      "UpstreamHttpMethod": [ "POST" ],
+      "DownstreamPathTemplate": "/api/payment/pix",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5008
+        }
+      ]
     }
   ],
   "GlobalConfiguration": {

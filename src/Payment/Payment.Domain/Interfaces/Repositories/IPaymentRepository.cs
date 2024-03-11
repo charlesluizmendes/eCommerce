@@ -4,5 +4,6 @@
     {
         Task<Models.Payment> GetByBasketIdAsync(int basketId);
         Task InsertAsync(Models.Payment payment);
+        Task SaveChangesAsync();
     }
 }

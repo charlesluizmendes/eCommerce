@@ -12,8 +12,8 @@ using Payment.Infrastructure.Context;
 namespace Payment.Infrastructure.Migrations
 {
     [DbContext(typeof(PaymentContext))]
-    [Migration("20240309021519_addCardPix")]
-    partial class addCardPix
+    [Migration("20240311023208_Initial")]
+    partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -60,6 +60,9 @@ namespace Payment.Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
+                    b.Property<double>("Amount")
+                        .HasColumnType("float");
+
                     b.Property<int>("BasketId")
                         .HasColumnType("int");
 
@@ -68,9 +71,6 @@ namespace Payment.Infrastructure.Migrations
 
                     b.Property<int?>("PixId")
                         .HasColumnType("int");
-
-                    b.Property<double>("Total")
-                        .HasColumnType("float");
 
                     b.Property<string>("UserId")
                         .IsRequired()

@@ -11,11 +11,14 @@ namespace Basket.Domain.Models
         [Required]
         public int Quantity { get; set; }
 
+        [Required]
         public string Name { get; set; }
 
+        [Required]
         public string Description { get; set; }
 
-        public double? Price { get; set; }
+        [Required]
+        public double Price { get; set; }
 
         [Required]
         public int ProductId { get; set; }

@@ -6,8 +6,10 @@ namespace Payment.Domain.Models
     {
         [Key]
         public int Id { get; set; }
+
         [Required]
         public string Key { get; set; }
+
         public Payment Payment { get; set; }
     }
 }

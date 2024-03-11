@@ -33,6 +33,8 @@ namespace Basket.Domain.Services
                     _itemRepository.Update(item);
                 }
 
+                await _itemRepository.SaveChangesAsync();
+
                 basket.Amount = 0;
                 basket.Active = false;
                 _repository.Update(basket);

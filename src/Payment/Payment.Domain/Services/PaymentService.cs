@@ -9,22 +9,28 @@ namespace Payment.Domain.Services
     public class PaymentService : IPaymentService
     {
         private readonly IPaymentRepository _repository;
-        private readonly ITransactionService _transactionService;
+        private readonly ICardRepository _cardRepository;
+        private readonly IPixRepository _pixRepository;
+        private readonly ITransactionRepository _transactionRepository;
         private readonly IBasketClient _client;
         private readonly IOrderEventBus _eventBus;
 
         public PaymentService(IPaymentRepository repository,
-            ITransactionService transactionService,
+            ICardRepository cardRepository,
+            IPixRepository pixRepository,
+            ITransactionRepository transactionRepository,
             IBasketClient client,
             IOrderEventBus eventBus)
         {
             _repository = repository;
-            _transactionService = transactionService;
+            _cardRepository = cardRepository;
+            _pixRepository = pixRepository;
+            _transactionRepository = transactionRepository;
             _client = client;
             _eventBus = eventBus;
         }
 
-        public async Task<bool> InsertAsync(Models.Payment payment)
+        public async Task<bool> CreatePaymentAsync(Models.Payment payment)
         {
             var basket = await _client.GetBasketByUserIdAsync(payment.UserId);
 
@@ -38,16 +44,33 @@ namespace Payment.Domain.Services
                 return false;
 
             payment.BasketId = basket.Id;
-            payment.Total = SumPriceItems(basket.Items);
+            payment.Amount = basket.Amount;
 
             // Cria o Pagamento
             await _repository.InsertAsync(payment);
 
-            // Cria a Transação
-            await _transactionService.InsertAsync(new Transaction()
+            if (payment.Card != null)
             {
-                PaymentId = payment.Id
+                payment.Card.Number = HideCardNumber(payment.Card.Number);
+                await _cardRepository.InsertAsync(payment.Card);
+                await _cardRepository.SaveChangesAsync();   
+            }
+
+            if (payment.Pix != null)
+            {
+                await _pixRepository.InsertAsync(payment.Pix);
+                await _pixRepository.SaveChangesAsync();    
+            }
+
+            await _repository.SaveChangesAsync();
+
+            // Cria a Transação
+            await _transactionRepository.InsertAsync(new Transaction()
+            {
+                PaymentId = payment.Id,
+                StatusId = 1
             });
+            await _transactionRepository.SaveChangesAsync();
 
             #region module Payment External
 
@@ -63,47 +86,46 @@ namespace Payment.Domain.Services
             #endregion
 
             // Obter a Transação 
-            var transaction = await _transactionService.GetByPaymentIdAsync(payment.Id);
+            var transaction = await _transactionRepository.GetByPaymentIdAsync(payment.Id);
 
             if (!confirm)
             {
                 // Atualiza a Transação para 'Cancelada'
                 transaction.StatusId = 3;
-                await _transactionService.UpdateAsync(transaction);
+                _transactionRepository.Update(transaction);
+                await _transactionRepository.SaveChangesAsync();
 
                 return false;
             }
             
             // Atualiza a Transação para 'Aprovada'
             transaction.StatusId = 2;
-            await _transactionService.UpdateAsync(transaction);
+            _transactionRepository.Update(transaction);
+            await _transactionRepository.SaveChangesAsync();
 
             // Remove o Carrinho
-            await _client.DeleteBasketByUserIdAsync(payment.UserId);
+            await _client.RemoveBasketByIdAsync(basket.Id);
 
             // Cria a Order
             await _eventBus.PublisherAsync(new Order()
             {
                 PaymentId = payment.Id,
-                Total = payment.Total,
                 Basket = basket
             });
 
             return true;
         }
 
-        #region private Methods
+        #region Private Methods
 
-        private double SumPriceItems(List<Item> items)
+        private static string HideCardNumber(string numeroCartao)
         {
-            double total = 0;
+            // Mantém os primeiros e últimos 4 dígitos e substitui os restantes por asteriscos
+            string numeroOculto = numeroCartao.Substring(0, 4) +
+                                  new string('*', numeroCartao.Length - 8) +
+                                  numeroCartao.Substring(numeroCartao.Length - 4, 4);
 
-            foreach (var item in items)
-            {
-                total += (item.Price * item.Quantity);
-            }
-
-            return total;
+            return numeroOculto;
         }
 
         #endregion

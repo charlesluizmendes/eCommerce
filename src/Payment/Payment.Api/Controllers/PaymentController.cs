@@ -1,7 +1,8 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Payment.Application.Interface;
 using Payment.Application.ViewModels;
+using Payment.Domain.Interfaces.Services;
 
 namespace Payment.Api.Controllers
 {
@@ -10,17 +11,20 @@ namespace Payment.Api.Controllers
     [ApiController]
     public class PaymentController : ControllerBase
     {
-        private readonly IPaymentAppService _appService;
+        private readonly IMapper _mapper;
+        private readonly IPaymentService _paymentService;
 
-        public PaymentController(IPaymentAppService appService)
+        public PaymentController(IMapper mapper,
+            IPaymentService paymentService )
         {
-            _appService = appService;
+            _mapper = mapper;
+            _paymentService = paymentService;
         }
 
         [HttpPost("Card")]
         public async Task<ActionResult> Card(CreatePaymentCardViewModel viewModel)
         {
-            var payment = await _appService.CreatePaymentCardAsync(viewModel);
+            var payment = await _paymentService.CreatePaymentAsync(_mapper.Map<Domain.Models.Payment>(viewModel));
 
             if (!payment)
                 return BadRequest();
@@ -31,7 +35,7 @@ namespace Payment.Api.Controllers
         [HttpPost("Pix")]
         public async Task<ActionResult> Pix(CreatePaymentPixViewModel viewModel)
         {
-            var payment = await _appService.CreatePaymentPixAsync(viewModel);
+            var payment = await _paymentService.CreatePaymentAsync(_mapper.Map<Domain.Models.Payment>(viewModel));
 
             if (!payment)
                 return BadRequest();

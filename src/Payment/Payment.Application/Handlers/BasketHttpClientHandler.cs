@@ -14,10 +14,17 @@ namespace Payment.Application.Handlers
         protected async override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
         {
             var token = _httpContextAccessor.HttpContext.Request.Headers["Authorization"].ToString();
-
+           
             request.Headers.Add("Authorization", token);
 
-            return await base.SendAsync(request, cancellationToken);
+            try
+            {
+                return await base.SendAsync(request, cancellationToken); 
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
     }
 }

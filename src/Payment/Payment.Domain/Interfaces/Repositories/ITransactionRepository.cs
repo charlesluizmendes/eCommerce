@@ -6,6 +6,7 @@ namespace Payment.Domain.Interfaces.Repositories
     {
         Task<Transaction> GetByPaymentIdAsync(int paymentId);
         Task InsertAsync(Transaction transaction);
-        Task UpdateAsync(Transaction transaction);
+        void Update(Transaction transaction);
+        Task SaveChangesAsync();
     }
 }

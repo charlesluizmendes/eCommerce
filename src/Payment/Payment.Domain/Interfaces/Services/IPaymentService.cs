@@ -2,6 +2,6 @@
 {
     public interface IPaymentService
     {
-        Task<bool> InsertAsync(Models.Payment payment);
+        Task<bool> CreatePaymentAsync(Models.Payment payment);
     }
 }

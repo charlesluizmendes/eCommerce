@@ -19,16 +19,11 @@ namespace Basket.Application.Handlers
 
             try
             {
-                var response = await base.SendAsync(request, cancellationToken);
-
-                if (!response.IsSuccessStatusCode)
-                    return null;
-
-                return response;
+                return await base.SendAsync(request, cancellationToken);
             }
             catch (Exception)
             {
-                return null;
+                throw;
             }
         }
     }

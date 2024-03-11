@@ -6,8 +6,9 @@ namespace Basket.Domain.Models
     {
         [Key]
         public int Id { get; set; }
-       
-        public double? Amount { get; set; }
+
+        [Required]
+        public double Amount { get; set; }
 
         [Required]
         public string UserId { get; set; }
