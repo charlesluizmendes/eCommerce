@@ -1,4 +1,5 @@
-﻿using Basket.Domain.Interfaces.Client;
+﻿using Basket.Domain.Core;
+using Basket.Domain.Interfaces.Client;
 using Basket.Domain.Interfaces.Identity;
 using Basket.Domain.Interfaces.Repositories;
 using Basket.Domain.Interfaces.Services;
@@ -8,16 +9,19 @@ namespace Basket.Domain.Services
 {
     public class ItemService : IItemService
     {
+        private readonly NotificationContext _context;
         private readonly IItemRepository _repository;
         private readonly IBasketRepository _basketRepository;
         private readonly IUserIdentity _identity;
         private readonly ICatalogClient _client;
 
         public ItemService(IItemRepository repository,
+            NotificationContext context,
             IBasketRepository basketRepository,
             IUserIdentity identity,
             ICatalogClient client)
         {
+            _context = context;
             _repository = repository;
             _basketRepository = basketRepository;
             _identity = identity;
@@ -27,6 +31,13 @@ namespace Basket.Domain.Services
         public async Task<bool> AddToBasketAsync(Item item)
         {
             var product = await _client.GetProductByIdAsync(item.ProductId);
+
+            if (product == null) 
+            {
+                _context.AddNotification("Não foi encontrado nenhum Produto");
+
+                return false;
+            }
 
             item.Name = product.Name;
             item.Description = product.Description;
@@ -79,8 +90,12 @@ namespace Basket.Domain.Services
             var item = await _repository.GetByIdAsync(id);
 
             // Verifica se o Item existe
-            if (item == null)
-                return false;
+            if (item == null) 
+            {
+                _context.AddNotification("Não foi encontrado nenhum Item");
+
+                return false; 
+            }
 
             // Remove a Quantidade do Item
             if (item.Quantity > 1)

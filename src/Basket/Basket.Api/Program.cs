@@ -4,21 +4,24 @@ using Basket.Domain.Interfaces.Services;
 using Basket.Domain.Services;
 using Basket.Infrastructure.Context;
 using Basket.Infrastructure.Repositories;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
-using Polly.Extensions.Http;
-using Polly;
-using System.Text;
-using Basket.Application.Handlers;
-using Microsoft.OpenApi.Models;
-using Basket.Domain.Interfaces.Client;
-using Basket.Infrastructure.Client;
-using FluentValidation.AspNetCore;
-using FluentValidation;
 using Basket.Application.Validators;
 using Basket.Domain.Interfaces.Identity;
 using Basket.Infrastructure.Identity;
+using Basket.Domain.Core;
+using Basket.Domain.Interfaces.Client;
+using Basket.Application.Handlers;
+using Basket.Infrastructure.Client;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
+using FluentValidation.AspNetCore;
+using FluentValidation;
+using Polly.Extensions.Http;
+using Polly;
+using System.Text;
+using Microsoft.AspNetCore.Mvc;
+using Basket.Application.Filters;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -30,8 +33,11 @@ builder.Services.AddTransient<IItemService, ItemService>();
 builder.Services.AddTransient<IItemRepository, ItemRepository>();
 builder.Services.AddTransient<ICatalogClient, CatalogClient>();
 builder.Services.AddTransient<IUserIdentity, UserIdentity>();
-
+builder.Services.AddScoped<NotificationContext>();
 builder.Services.AddTransient<CatalogHttpClientHandler>();
+
+// Add HttpContext
+
 builder.Services.AddHttpContextAccessor();
 
 // AutoMapper
@@ -82,7 +88,10 @@ builder.Services.AddHttpClient("Catalog", client =>
     .SetHandlerLifetime(TimeSpan.FromMinutes(5))
     .AddPolicyHandler(GetRetryPolicy());
 
-builder.Services.AddControllers();
+builder.Services.AddControllers(options =>
+    // Filters
+    options.Filters.Add<NotificationFilter>()
+); ;
 
 // Swagger
 
@@ -113,6 +122,19 @@ builder.Services.AddSwaggerGen(c =>
             new[] { "readAccess", "writeAccess" }
         }
     });
+});
+
+// ModelState Validation
+
+builder.Services.Configure<ApiBehaviorOptions>(o =>
+{
+    o.SuppressMapClientErrors = true;
+    o.InvalidModelStateResponseFactory = context =>
+    {
+        return new BadRequestObjectResult(context.ModelState
+            .SelectMany(state => state.Value.Errors)
+            .Select(error => error.ErrorMessage));
+    };
 });
 
 // Polly

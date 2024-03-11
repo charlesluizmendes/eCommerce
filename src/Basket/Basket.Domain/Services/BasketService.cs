@@ -1,4 +1,5 @@
-﻿using Basket.Domain.Interfaces.Identity;
+﻿using Basket.Domain.Core;
+using Basket.Domain.Interfaces.Identity;
 using Basket.Domain.Interfaces.Repositories;
 using Basket.Domain.Interfaces.Services;
 
@@ -6,14 +7,17 @@ namespace Basket.Domain.Services
 {
     public class BasketService : IBasketService
     {
+        private readonly NotificationContext _context;
         private readonly IBasketRepository _repository;
         private readonly IItemRepository _itemRepository;
         private readonly IUserIdentity _identity;
 
-        public BasketService(IBasketRepository repository, 
+        public BasketService(NotificationContext context,
+            IBasketRepository repository, 
             IItemRepository itemRepository,
             IUserIdentity identity)
         {
+            _context = context;
             _repository = repository;
             _itemRepository = itemRepository;
             _identity = identity;
@@ -31,7 +35,11 @@ namespace Basket.Domain.Services
             var basket = await _repository.GetByIdAsync(id);
 
             if (basket == null)
+            {
+                _context.AddNotification("Não foi encontrado nenhum Carrinho");
+
                 return false;
+            }
 
             foreach (var item in basket.Items)
             {
