@@ -20,7 +20,7 @@ namespace Basket.Application.Filters
             if (_notificationContext.HasNotifications)
             {
                 context.HttpContext.Response.StatusCode = (int)HttpStatusCode.BadRequest;
-                await context.HttpContext.Response.WriteAsJsonAsync(_notificationContext.Notifications);
+                await context.HttpContext.Response.WriteAsJsonAsync(_notificationContext.Notification);
 
                 return;
             }

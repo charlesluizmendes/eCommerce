@@ -2,18 +2,18 @@
 {
     public class NotificationContext
     {
-        private readonly List<string> _notifications;
-        public IReadOnlyCollection<string> Notifications => _notifications;
-        public bool HasNotifications => _notifications.Any();
+        private readonly Notification _notification;
+        public Notification Notification => _notification;
+        public bool HasNotifications => _notification.Errors.Count > 0;
 
         public NotificationContext()
         {
-            _notifications = new List<string>();
+            _notification = new Notification();
         }
 
         public void AddNotification(string message)
         {
-            _notifications.Add(message);
+            _notification.Errors.Add(message);
         }
     }
 }

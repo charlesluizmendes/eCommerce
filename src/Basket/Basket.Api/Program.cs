@@ -131,9 +131,14 @@ builder.Services.Configure<ApiBehaviorOptions>(o =>
     o.SuppressMapClientErrors = true;
     o.InvalidModelStateResponseFactory = context =>
     {
-        return new BadRequestObjectResult(context.ModelState
+        var errors = context.ModelState
             .SelectMany(state => state.Value.Errors)
-            .Select(error => error.ErrorMessage));
+            .Select(error => error.ErrorMessage);
+
+        return new BadRequestObjectResult(new Notification()
+        { 
+            Errors = new List<string>(errors)
+        });
     };
 });
 
