@@ -37,7 +37,7 @@ namespace Identity.Api.Controllers
             return Ok(_mapper.Map<UserViewModel>(user));
         }
 
-
+        [AllowAnonymous]
         [HttpPost("Add")]
         public async Task<ActionResult> Add(AddUserViewModel viewModel)
         {
