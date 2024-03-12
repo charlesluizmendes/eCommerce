@@ -27,7 +27,7 @@ namespace Order.Domain.Services
 
         public async Task<bool> CreateOrderAsync(Models.Order order)
         {
-            var existingOrder = await _repository.GetByBasketIdAsync(order.BasketId);
+            var existingOrder = await _repository.GetByBasketIdAsync(order.Basket.Id);
 
             // Verificar se a Order já foi criada
             if (existingOrder == null)

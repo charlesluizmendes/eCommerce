@@ -32,11 +32,11 @@ IHost host = Host.CreateDefaultBuilder(args)
     {
         // IoC
 
-        services.AddSingleton<IOrderService, OrderService>();
-        services.AddSingleton<IOrderRepository, OrderRepository>();
-        services.AddSingleton<IOrderEventBus, OrderEventBus>();
-        services.AddSingleton<IIdentityClient, IdentityClient>();
-        services.AddSingleton<IEmailProxy, EmailProxy>();
+        services.AddTransient<IOrderService, OrderService>();
+        services.AddTransient<IOrderRepository, OrderRepository>();
+        services.AddTransient<IOrderEventBus, OrderEventBus>();
+        services.AddTransient<IIdentityClient, IdentityClient>();
+        services.AddTransient<IEmailProxy, EmailProxy>();
 
         // Context
 
