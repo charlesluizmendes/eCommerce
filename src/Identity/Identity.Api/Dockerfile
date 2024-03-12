@@ -8,10 +8,10 @@ EXPOSE 443
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
-COPY ["src/Identity.Api/Identity.Api.csproj", "src/Identity.Api/"]
-RUN dotnet restore "./src/Identity.Api/Identity.Api.csproj"
+COPY ["src/Identity/Identity.Api/Identity.Api.csproj", "src/Identity/Identity.Api/"]
+RUN dotnet restore "./src/Identity/Identity.Api/Identity.Api.csproj"
 COPY . .
-WORKDIR "/src/src/Identity.Api"
+WORKDIR "/src/src/Identity/Identity.Api"
 RUN dotnet build "./Identity.Api.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
 FROM build AS publish

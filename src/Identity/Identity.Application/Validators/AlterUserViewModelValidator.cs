@@ -7,10 +7,6 @@ namespace Identity.Application.Validators
     {
         public AlterUserViewModelValidator()
         {
-            RuleFor(x => x.Id)
-                .NotEmpty().NotNull()
-                .WithMessage("O Id não pode ser nulo");
-
             RuleFor(x => x.Name)
                 .NotEmpty().NotNull()
                 .WithMessage("O Nome não pode ser nulo")

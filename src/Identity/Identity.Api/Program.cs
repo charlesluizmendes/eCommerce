@@ -1,7 +1,6 @@
-using FluentValidation;
 using FluentValidation.AspNetCore;
+using FluentValidation;
 using Identity.Application.AutoMapper;
-using Identity.Application.Filters;
 using Identity.Application.Validators;
 using Identity.Domain.Core;
 using Identity.Domain.Interfaces.Identity;
@@ -13,9 +12,13 @@ using Identity.Infraestructure.Context;
 using Identity.Infraestructure.Options;
 using Identity.Infraestructure.Repositories;
 using Identity.Infrastructure.Identity;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+using Identity.Application.Filters;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -65,6 +68,27 @@ builder.Services.AddValidatorsFromAssemblyContaining<AlterUserViewModelValidator
 builder.Services.AddValidatorsFromAssemblyContaining<CreateAccessTokenViewModelValidator>();
 builder.Services.AddFluentValidationAutoValidation();
 
+// JWT
+
+var accessToken = builder.Configuration.GetSection("AccessToken");
+
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+.AddJwtBearer(options =>
+{
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
+        ValidIssuer = accessToken["Iss"],
+        ValidAudience = accessToken["Aud"],
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(accessToken["Secret"])),
+        ClockSkew = TimeSpan.Zero,
+        RequireExpirationTime = true
+    };
+});
+
 builder.Services.AddControllers(options =>
     // Filters
     options.Filters.Add<NotificationFilter>()
@@ -80,6 +104,24 @@ builder.Services.AddSwaggerGen(c =>
         Title = "Microservice Identity",
         Description = "Microservice of Identity",
         Version = "v1"
+    });
+    c.AddSecurityDefinition(JwtBearerDefaults.AuthenticationScheme, new OpenApiSecurityScheme
+    {
+        Description = "Token Authorization header using the Bearer scheme.",
+        Name = "Authorization",
+        In = ParameterLocation.Header,
+        Type = SecuritySchemeType.ApiKey,
+        Scheme = JwtBearerDefaults.AuthenticationScheme,
+    });
+    c.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = JwtBearerDefaults.AuthenticationScheme }
+            },
+            new[] { "readAccess", "writeAccess" }
+        }
     });
 });
 
@@ -103,7 +145,6 @@ builder.Services.Configure<ApiBehaviorOptions>(o =>
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     // Swagger
@@ -113,6 +154,10 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+// JWT
+
+app.UseAuthentication();
 
 app.UseAuthorization();
 

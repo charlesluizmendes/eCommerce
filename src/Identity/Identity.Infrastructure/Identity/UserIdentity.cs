@@ -2,6 +2,7 @@
 using Identity.Domain.Models;
 using Identity.Infraestructure.Options;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
@@ -12,12 +13,16 @@ namespace Identity.Infrastructure.Identity
 {
     public class UserIdentity : IUserIdentity
     {
+        private readonly IHttpContextAccessor _httpContextAccessor;
+
         private readonly string _secret;
         private readonly string _iss;
         private readonly string _aud;
 
-        public UserIdentity(IOptions<AccessTokenConfiguration> audienceOptions)
+        public UserIdentity(IHttpContextAccessor httpContextAccessor,
+            IOptions<AccessTokenConfiguration> audienceOptions)
         {
+            _httpContextAccessor = httpContextAccessor; 
             _secret = audienceOptions.Value.Secret;
             _iss = audienceOptions.Value.Iss;
             _aud = audienceOptions.Value.Aud;
@@ -61,6 +66,22 @@ namespace Identity.Infrastructure.Identity
             {
                 throw;
             }
+        }
+
+        public string GetUserIdFromToken()
+        {
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var token = _httpContextAccessor.HttpContext.Request.Headers["Authorization"].ToString();
+
+            if (token.StartsWith("Bearer "))
+            {
+                token = token.Substring(7);
+            }
+
+            var jwtToken = tokenHandler.ReadJwtToken(token);
+            var claim = jwtToken.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier);
+
+            return claim.Value;
         }
     }
 }

@@ -2,10 +2,12 @@
 using Identity.Application.ViewModels;
 using Identity.Domain.Interfaces.Services;
 using Identity.Domain.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Identity.Api.Controllers
 {
+    [Authorize(AuthenticationSchemes = "Bearer")]
     [Route("api/[controller]")]
     [ApiController]
     public class UserController : ControllerBase
@@ -27,6 +29,15 @@ namespace Identity.Api.Controllers
             return Ok(_mapper.Map<UserViewModel>(user));
         }
 
+        [HttpGet("Get")]
+        public async Task<ActionResult<UserViewModel>> Get()
+        {
+            var user = await _userService.GetAsync();
+
+            return Ok(_mapper.Map<UserViewModel>(user));
+        }
+
+        [AllowAnonymous]
         [HttpPost("Add")]
         public async Task<ActionResult> Add(AddUserViewModel viewModel)
         {
@@ -43,15 +54,10 @@ namespace Identity.Api.Controllers
             return Ok();
         }
 
-        [HttpDelete("Remove/{id}")]
-        public async Task<ActionResult> Remove(string id)
+        [HttpDelete("Remove")]
+        public async Task<ActionResult> Remove()
         {
-            var user = await _userService.GetByIdAsync(id);
-
-            if (user != null)
-                return NotFound();
-
-            await _userService.DeleteAsync(user);
+            await _userService.DeleteAsync();
 
             return Ok();
         }

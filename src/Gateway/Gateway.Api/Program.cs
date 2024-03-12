@@ -8,11 +8,9 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Configuration.AddJsonFile("configuration.json", optional: false, reloadOnChange: true);
 
-// Option
+// JWT
 
 var accessToken = builder.Configuration.GetSection("AccessToken");
-
-// JWT
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 .AddJwtBearer(options =>
