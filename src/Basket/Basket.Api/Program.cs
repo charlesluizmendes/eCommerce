@@ -11,17 +11,17 @@ using Basket.Domain.Core;
 using Basket.Domain.Interfaces.Client;
 using Basket.Application.Handlers;
 using Basket.Infrastructure.Client;
+using Basket.Application.Filters;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Microsoft.AspNetCore.Mvc;
 using FluentValidation.AspNetCore;
 using FluentValidation;
 using Polly.Extensions.Http;
 using Polly;
 using System.Text;
-using Microsoft.AspNetCore.Mvc;
-using Basket.Application.Filters;
 
 var builder = WebApplication.CreateBuilder(args);
 
