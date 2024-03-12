@@ -7,10 +7,10 @@ namespace Order.Domain.Models
     {
         [Key]
         public int Id { get; set; }
+
         [Required]
         public int PaymentId { get; set; }
-        [Required]
-        public double Total { get; set; }
+
         [ForeignKey("Basket")]
         public int BasketId { get; set; }
         public Basket Basket { get; set; }

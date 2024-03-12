@@ -13,24 +13,41 @@ namespace Order.Infrastructure.Repositories
             _context = context;
         }
 
+        public async Task<Domain.Models.Order> GetByBasketIdAsync(int id)
+        {
+            try
+            {
+                return await _context.Order
+                    .Include(b => b.Basket)
+                    .Include(b => b.Basket.Items)
+                    .FirstOrDefaultAsync(b => b.Basket.Id == id);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
         public async Task InsertAsync(Domain.Models.Order order)
         {
             try
             {
-                // Verifica se a Order ja foi Criada
-                var order_ = _context.Order
-                    .Include(b => b.Basket)
-                    .Include(b => b.Basket.Items)
-                    .FirstOrDefault(b => b.Basket.Id == order.Basket.Id);
+                await _context.Order.AddAsync(order);
+                await _context.Basket.AddAsync(order.Basket);
+                await _context.Item.AddRangeAsync(order.Basket.Items);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
 
-                if (order_ == null) 
-                {
-                    _context.Order.Add(order);
-                    _context.Basket.Add(order.Basket);
-                    _context.Item.AddRange(order.Basket.Items);
+        public async Task SaveChangesAsync()
+        {
+            try
+            {
+                await _context.SaveChangesAsync();
 
-                    await _context.SaveChangesAsync();
-                }               
             }
             catch (Exception)
             {

@@ -4,6 +4,6 @@ namespace Order.Domain.Interfaces.Client
 {
     public interface IIdentityClient
     {
-        Task<User> GetUserByUserId(string userId);
+        Task<User> GetUserByIdAsync(string userId);
     }
 }

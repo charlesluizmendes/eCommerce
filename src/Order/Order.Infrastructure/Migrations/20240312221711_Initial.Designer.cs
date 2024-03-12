@@ -11,7 +11,7 @@ using Order.Infrastructure.Context;
 namespace Order.Infrastructure.Migrations
 {
     [DbContext(typeof(OrderContext))]
-    [Migration("20240307050800_Initial")]
+    [Migration("20240312221711_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -30,6 +30,9 @@ namespace Order.Infrastructure.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<double>("Amount")
+                        .HasColumnType("float");
 
                     b.Property<string>("UserId")
                         .IsRequired()
@@ -88,9 +91,6 @@ namespace Order.Infrastructure.Migrations
 
                     b.Property<int>("PaymentId")
                         .HasColumnType("int");
-
-                    b.Property<double>("Total")
-                        .HasColumnType("float");
 
                     b.HasKey("Id");
 

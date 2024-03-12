@@ -3,6 +3,10 @@ using Order.Domain.Interfaces.EventBus;
 using Order.Domain.Interfaces.Repositories;
 using Order.Domain.Interfaces.Services;
 using Order.Domain.Services;
+using Order.Domain.Interfaces.Client;
+using Order.Infrastructure.Client;
+using Order.Domain.Interfaces.Proxys;
+using Order.Infrastructure.Proxys;
 using Order.Infrastructure.Context;
 using Order.Infrastructure.EventBus;
 using Order.Infrastructure.Options;
@@ -10,11 +14,6 @@ using Order.Infrastructure.Repositories;
 using Order.Worker;
 using Polly.Extensions.Http;
 using Polly;
-using Order.Domain.Interfaces.Client;
-using Order.Infrastructure.Client;
-using Order.Domain.Interfaces.Proxys;
-using Order.Infrastructure.Proxys;
-using Microsoft.Extensions.Configuration;
 
 IHost host = Host.CreateDefaultBuilder(args)
     .ConfigureAppConfiguration((hostBuilderContext, configurationBuilder) =>

@@ -13,13 +13,13 @@ namespace Order.Infrastructure.Client
             _httpClientFactory = httpClientFactory;
         }
 
-        public async Task<User> GetUserByUserId(string userId)
+        public async Task<User> GetUserByIdAsync(string userId)
         {
             var client = _httpClientFactory.CreateClient("Identity");
 
             try
             {
-                var response = await client.GetAsync($"api/User/{userId}");
+                var response = await client.GetAsync($"api/User/Get/{userId}");
                 var result = await response.Content.ReadAsStringAsync();
 
                 if (!response.IsSuccessStatusCode)

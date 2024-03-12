@@ -24,7 +24,11 @@ namespace Order.Infrastructure.Migrations
             modelBuilder.Entity("Order.Domain.Models.Basket", b =>
                 {
                     b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
+
+                    b.Property<double>("Amount")
+                        .HasColumnType("float");
 
                     b.Property<string>("UserId")
                         .IsRequired()
@@ -38,6 +42,7 @@ namespace Order.Infrastructure.Migrations
             modelBuilder.Entity("Order.Domain.Models.Item", b =>
                 {
                     b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
                     b.Property<int>("BasketId")
@@ -80,9 +85,6 @@ namespace Order.Infrastructure.Migrations
 
                     b.Property<int>("PaymentId")
                         .HasColumnType("int");
-
-                    b.Property<double>("Total")
-                        .HasColumnType("float");
 
                     b.HasKey("Id");
 

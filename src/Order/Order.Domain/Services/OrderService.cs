@@ -1,4 +1,6 @@
-﻿using Order.Domain.Interfaces.Client;
+﻿using Microsoft.Extensions.Logging;
+using Order.Domain.Extensions;
+using Order.Domain.Interfaces.Client;
 using Order.Domain.Interfaces.Proxys;
 using Order.Domain.Interfaces.Repositories;
 using Order.Domain.Interfaces.Services;
@@ -7,14 +9,17 @@ namespace Order.Domain.Services
 {
     public class OrderService : IOrderService
     {
+        private readonly ILogger<OrderService> _logger;
         private readonly IOrderRepository _repository;
         private readonly IIdentityClient _client;
         private readonly IEmailProxy _emailProxy;
 
-        public OrderService(IOrderRepository repository,
+        public OrderService(ILogger<OrderService> logger,
+            IOrderRepository repository,
             IIdentityClient client,
             IEmailProxy emailProxy)
         {
+            _logger = logger;
             _repository = repository;
             _client = client;
             _emailProxy = emailProxy;
@@ -22,40 +27,43 @@ namespace Order.Domain.Services
 
         public async Task<bool> CreateOrderAsync(Models.Order order)
         {
-            await _repository.InsertAsync(order);
+            var existingOrder = await _repository.GetByBasketIdAsync(order.BasketId);
 
-            var user = await _client.GetUserByUserId(order.Basket.UserId);
-
-            if (user != null) 
+            // Verificar se a Order já foi criada
+            if (existingOrder == null)
             {
-                await CreateConfirmationOrderAsync(order, user.Email);
-            }
+                await _repository.InsertAsync(order);
+                await _repository.SaveChangesAsync();
+
+                _logger.LogInformation($"Inserindo OrderId: {order.Id}");
+            }     
+
+            var user = await _client.GetUserByIdAsync(order.Basket.UserId);
+
+            // Verifica se o Usuario existe
+            if (user == null)
+            {
+                _logger.LogInformation($"Não foi possível encontrar o Usuario UserId: {order.Basket.UserId}");
+
+                return false;
+            }                
+
+            // Cria o Email de Confirmação
+            var text = EmailExtension.CreateEmailConfirmationAsync(order.Id, 
+                order.Basket.Amount, 
+                order.Basket.Items);
+
+            _logger.LogInformation($"Criando Email OrderId: {order.Id}");
+
+            // Envia o Email de Confirmação
+            await _emailProxy.SendAsync("no-replay@infnet.com",
+               user.Email,
+               "Confirmacao de Pedido",
+               text);
+
+            _logger.LogInformation($"Enviando Email OrderId: {order.Id}");
 
             return true;
-        }
-
-        #region private Methods
-
-        private async Task CreateConfirmationOrderAsync(Models.Order order, string email)
-        {
-            var text = $"Confirmacao do Pedido #{order.Id}\n";
-            text += "\nObrigado por realizar sua compra!\n";
-            text += "\nLista de Itens do Pedido:\n";
-
-            foreach (var item in order.Basket.Items)
-            {
-                text += $"{item.Quantity} {item.Name}: {item.Description} R$ {item.Price}\n";
-            }
-
-            text += $"\nTotal: R$ {order.Total}\n";          
-            text += $"\nVolte Sempre!\n";          
-
-            await _emailProxy.SendAsync("no-replay@infnet.com",
-                email,
-                "Confirmacao de Pedido",
-                text);
-        }
-
-        #endregion
+        }       
     }
 }

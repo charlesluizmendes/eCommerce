@@ -20,9 +20,13 @@ namespace Order.Worker
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
+            _logger.LogInformation("Iniciando a Execução");
+
             await _eventBus.SubscriberAsync(async (order, stoppingToken) =>
                 await _orderService.CreateOrderAsync(order)
             );
+
+            _logger.LogInformation("Finalizando a Execução");
         }
     }
 }
