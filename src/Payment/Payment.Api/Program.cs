@@ -1,9 +1,5 @@
 using FluentValidation.AspNetCore;
 using FluentValidation;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
-using Microsoft.OpenApi.Models;
 using Payment.Application.Handlers;
 using Payment.Domain.Interfaces.Client;
 using Payment.Domain.Interfaces.EventBus;
@@ -16,17 +12,28 @@ using Payment.Infrastructure.EventBus;
 using Payment.Infrastructure.Options;
 using Payment.Infrastructure.Repositories;
 using Payment.Application.Validators;
+using Payment.Application.Filters;
+using Payment.Infrastructure.Identity;
+using Payment.Application.AutoMapper;
+using Payment.Domain.Interfaces.Identity;
+using Payment.Domain.Core;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 using Polly;
 using Polly.Extensions.Http;
 using System.Text;
-using Payment.Application.AutoMapper;
-using Payment.Domain.Interfaces.Identity;
-using Basket.Infrastructure.Identity;
-using Payment.Domain.Core;
-using Microsoft.AspNetCore.Mvc;
-using Payment.Application.Filters;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddControllers(o =>
+
+    // Filters
+    o.Filters.Add<NotificationFilter>()
+);
 
 // IoC
 
@@ -51,8 +58,8 @@ builder.Services.AddAutoMapper(typeof(MappingProfile));
 
 // Context
 
-builder.Services.AddDbContext<PaymentContext>(option =>
-     option.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))
+builder.Services.AddDbContext<PaymentContext>(o =>
+     o.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))
 );
 
 // FluentValidation
@@ -69,52 +76,56 @@ builder.Services.Configure<RabbitMqConfiguration>(builder.Configuration.GetSecti
 
 var accessToken = builder.Configuration.GetSection("AccessToken");
 
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-.AddJwtBearer(options =>
+builder.Services.AddAuthentication(o =>
 {
-    options.TokenValidationParameters = new TokenValidationParameters
+    o.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    o.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+.AddJwtBearer(o =>
+{
+    o.RequireHttpsMetadata = false;
+    o.SaveToken = true;
+    o.TokenValidationParameters = new TokenValidationParameters
     {
-        ValidateIssuer = true,
-        ValidateAudience = true,
-        ValidateLifetime = true,
         ValidateIssuerSigningKey = true,
-        ValidIssuer = accessToken["Iss"],
-        ValidAudience = accessToken["Aud"],
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(accessToken["Secret"])),
-        ClockSkew = TimeSpan.Zero,
-        RequireExpirationTime = true
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(accessToken["Secret"])),
+        ValidateIssuer = false,
+        ValidateAudience = false
     };
+});
+
+builder.Services.AddAuthorization(o =>
+{
+    o.DefaultPolicy = new AuthorizationPolicyBuilder()
+        .AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme)
+        .RequireAuthenticatedUser()
+        .Build();
 });
 
 // HttpClient
 
 var basket = builder.Configuration.GetSection("Basket");
 
-builder.Services.AddHttpClient("Basket", client =>
+builder.Services.AddHttpClient("Basket", o =>
 {
-    client.BaseAddress = new Uri(basket["BaseUrl"]);
+    o.BaseAddress = new Uri(basket["BaseUrl"]);
 })
     .AddHttpMessageHandler<BasketHttpClientHandler>()
     .SetHandlerLifetime(TimeSpan.FromMinutes(5))
     .AddPolicyHandler(GetRetryPolicy());
 
-builder.Services.AddControllers(options =>
-    // Filters
-    options.Filters.Add<NotificationFilter>()
-);
-
 // Swagger
 
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen(c =>
+builder.Services.AddSwaggerGen(o =>
 {
-    c.SwaggerDoc("v1", new OpenApiInfo
+    o.SwaggerDoc("v1", new OpenApiInfo
     {
         Title = "Microservice Payment",
         Description = "Microservice of Payment",
         Version = "v1"
     });
-    c.AddSecurityDefinition(JwtBearerDefaults.AuthenticationScheme, new OpenApiSecurityScheme
+    o.AddSecurityDefinition(JwtBearerDefaults.AuthenticationScheme, new OpenApiSecurityScheme
     {
         Description = "Token Authorization header using the Bearer scheme.",
         Name = "Authorization",
@@ -122,7 +133,7 @@ builder.Services.AddSwaggerGen(c =>
         Type = SecuritySchemeType.ApiKey,
         Scheme = JwtBearerDefaults.AuthenticationScheme,
     });
-    c.AddSecurityRequirement(new OpenApiSecurityRequirement
+    o.AddSecurityRequirement(new OpenApiSecurityRequirement
     {
         {
             new OpenApiSecurityScheme
@@ -178,7 +189,6 @@ app.UseHttpsRedirection();
 // JWT
 
 app.UseAuthentication();
-
 app.UseAuthorization();
 
 app.MapControllers();

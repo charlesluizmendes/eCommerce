@@ -17,6 +17,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 using FluentValidation.AspNetCore;
 using FluentValidation;
 using Polly.Extensions.Http;
@@ -24,6 +25,12 @@ using Polly;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddControllers(o =>
+
+    // Filters
+    o.Filters.Add<NotificationFilter>()
+);
 
 // IoC
 
@@ -46,8 +53,8 @@ builder.Services.AddAutoMapper(typeof(MappingProfile));
 
 // Context
 
-builder.Services.AddDbContext<BasketContext>(option =>
-     option.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))
+builder.Services.AddDbContext<BasketContext>(o =>
+     o.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))
 );
 
 // FluentValidation
@@ -59,52 +66,56 @@ builder.Services.AddFluentValidationAutoValidation();
 
 var accessToken = builder.Configuration.GetSection("AccessToken");
 
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-.AddJwtBearer(options =>
+builder.Services.AddAuthentication(o =>
 {
-    options.TokenValidationParameters = new TokenValidationParameters
+    o.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    o.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+    .AddJwtBearer(o =>
     {
-        ValidateIssuer = true,
-        ValidateAudience = true,
-        ValidateLifetime = true,
-        ValidateIssuerSigningKey = true,
-        ValidIssuer = accessToken["Iss"],
-        ValidAudience = accessToken["Aud"],
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(accessToken["Secret"])),
-        ClockSkew = TimeSpan.Zero,
-        RequireExpirationTime = true
-    };
+        o.RequireHttpsMetadata = false;
+        o.SaveToken = true;
+        o.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuerSigningKey = true,
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(accessToken["Secret"])),
+            ValidateIssuer = false,
+            ValidateAudience = false
+        };
+    });
+
+builder.Services.AddAuthorization(o =>
+{
+    o.DefaultPolicy = new AuthorizationPolicyBuilder()
+        .AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme)
+        .RequireAuthenticatedUser()
+        .Build();
 });
 
 // HttpClient
 
 var catalog = builder.Configuration.GetSection("Catalog");
 
-builder.Services.AddHttpClient("Catalog", client =>
+builder.Services.AddHttpClient("Catalog", o =>
 {
-    client.BaseAddress = new Uri(catalog["BaseUrl"]);
+    o.BaseAddress = new Uri(catalog["BaseUrl"]);
 })
     .AddHttpMessageHandler<CatalogHttpClientHandler>()
     .SetHandlerLifetime(TimeSpan.FromMinutes(5))
     .AddPolicyHandler(GetRetryPolicy());
 
-builder.Services.AddControllers(options =>
-    // Filters
-    options.Filters.Add<NotificationFilter>()
-);
-
 // Swagger
 
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen(c =>
+builder.Services.AddSwaggerGen(o =>
 {
-    c.SwaggerDoc("v1", new OpenApiInfo
+    o.SwaggerDoc("v1", new OpenApiInfo
     {
         Title = "Microservice Basket",
         Description = "Microservice of Basket",
         Version = "v1"
     });
-    c.AddSecurityDefinition(JwtBearerDefaults.AuthenticationScheme, new OpenApiSecurityScheme
+    o.AddSecurityDefinition(JwtBearerDefaults.AuthenticationScheme, new OpenApiSecurityScheme
     {
         Description = "Token Authorization header using the Bearer scheme.",
         Name = "Authorization",
@@ -112,7 +123,7 @@ builder.Services.AddSwaggerGen(c =>
         Type = SecuritySchemeType.ApiKey,
         Scheme = JwtBearerDefaults.AuthenticationScheme,
     });
-    c.AddSecurityRequirement(new OpenApiSecurityRequirement
+    o.AddSecurityRequirement(new OpenApiSecurityRequirement
     {
         {
             new OpenApiSecurityScheme
@@ -168,7 +179,6 @@ app.UseHttpsRedirection();
 // JWT
 
 app.UseAuthentication();
-
 app.UseAuthorization();
 
 app.MapControllers();

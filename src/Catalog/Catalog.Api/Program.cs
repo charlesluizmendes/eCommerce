@@ -1,4 +1,3 @@
-using Basket.Infrastructure.Identity;
 using Catalog.Application.AutoMapper;
 using Catalog.Application.Filters;
 using Catalog.Domain.Core;
@@ -7,8 +6,10 @@ using Catalog.Domain.Interfaces.Repositories;
 using Catalog.Domain.Interfaces.Services;
 using Catalog.Domain.Services;
 using Catalog.Infrastructure.Context;
+using Catalog.Infrastructure.Identity;
 using Catalog.Infrastructure.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -16,6 +17,12 @@ using Microsoft.OpenApi.Models;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddControllers(o =>
+
+    // Filters
+    o.Filters.Add<NotificationFilter>()
+);
 
 // IoC
 
@@ -34,48 +41,52 @@ builder.Services.AddAutoMapper(typeof(MappingProfile));
 
 // Context
 
-builder.Services.AddDbContext<CatalogContext>(option =>
-     option.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))
+builder.Services.AddDbContext<CatalogContext>(o =>
+     o.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))
 );
 
 // JWT
 
 var accessToken = builder.Configuration.GetSection("AccessToken");
 
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-.AddJwtBearer(options =>
+builder.Services.AddAuthentication(o =>
 {
-    options.TokenValidationParameters = new TokenValidationParameters
+    o.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    o.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+.AddJwtBearer(o =>
+{
+    o.RequireHttpsMetadata = false;
+    o.SaveToken = true;
+    o.TokenValidationParameters = new TokenValidationParameters
     {
-        ValidateIssuer = true,
-        ValidateAudience = true,
-        ValidateLifetime = true,
         ValidateIssuerSigningKey = true,
-        ValidIssuer = accessToken["Iss"],
-        ValidAudience = accessToken["Aud"],
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(accessToken["Secret"])),
-        ClockSkew = TimeSpan.Zero,
-        RequireExpirationTime = true
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(accessToken["Secret"])),
+        ValidateIssuer = false,
+        ValidateAudience = false
     };
 });
 
-builder.Services.AddControllers(options =>
-    // Filters
-    options.Filters.Add<NotificationFilter>()
-);
+builder.Services.AddAuthorization(o =>
+{
+    o.DefaultPolicy = new AuthorizationPolicyBuilder()
+        .AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme)
+        .RequireAuthenticatedUser()
+        .Build();
+});
 
 // Swagger
 
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen(c =>
+builder.Services.AddSwaggerGen(o =>
 {
-    c.SwaggerDoc("v1", new OpenApiInfo
+    o.SwaggerDoc("v1", new OpenApiInfo
     {
         Title = "Microservice Catalog",
         Description = "Microservice of Catalog",
         Version = "v1"
     });
-    c.AddSecurityDefinition(JwtBearerDefaults.AuthenticationScheme, new OpenApiSecurityScheme
+    o.AddSecurityDefinition(JwtBearerDefaults.AuthenticationScheme, new OpenApiSecurityScheme
     {
         Description = "Token Authorization header using the Bearer scheme.",
         Name = "Authorization",
@@ -83,7 +94,7 @@ builder.Services.AddSwaggerGen(c =>
         Type = SecuritySchemeType.ApiKey,
         Scheme = JwtBearerDefaults.AuthenticationScheme,
     });
-    c.AddSecurityRequirement(new OpenApiSecurityRequirement
+    o.AddSecurityRequirement(new OpenApiSecurityRequirement
     {
         {
             new OpenApiSecurityScheme
@@ -128,7 +139,6 @@ app.UseHttpsRedirection();
 // JWT
 
 app.UseAuthentication();
-
 app.UseAuthorization();
 
 app.MapControllers();

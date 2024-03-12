@@ -16,42 +16,36 @@ namespace Identity.Infrastructure.Identity
         private readonly IHttpContextAccessor _httpContextAccessor;
 
         private readonly string _secret;
-        private readonly string _iss;
-        private readonly string _aud;
+        private readonly int _expiryMinutes;
 
         public UserIdentity(IHttpContextAccessor httpContextAccessor,
-            IOptions<AccessTokenConfiguration> audienceOptions)
+            IOptions<AccessTokenConfiguration> options)
         {
             _httpContextAccessor = httpContextAccessor; 
-            _secret = audienceOptions.Value.Secret;
-            _iss = audienceOptions.Value.Iss;
-            _aud = audienceOptions.Value.Aud;
+
+            _secret = options.Value.Secret;
+            _expiryMinutes = options.Value.ExpiryMinutes;
         }
 
         public async Task<AccessToken> CreateTokenByUserIdAsync(string userId)
         {
             try
             {
-                var claims = new[]
+                var claims = new List<Claim>
                 {
-                     new Claim(ClaimTypes.NameIdentifier, userId),
+                    new Claim(ClaimTypes.NameIdentifier, userId),
                 };
 
-                var key = new SymmetricSecurityKey(
-                    Encoding.UTF8.GetBytes(_secret != null ? _secret : "")
-                    );
-
-                var creds = new SigningCredentials(
-                    key, SecurityAlgorithms.HmacSha256
-                    );
-
+                var expiryMinutes = (double)_expiryMinutes;
+                var expires = DateTime.Now.AddMinutes(expiryMinutes);
+                var secret = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_secret));
+                var signingCredentials = new SigningCredentials(secret, SecurityAlgorithms.HmacSha256);
+                
                 var jwt = new JwtSecurityToken(
-                    issuer: _iss,
-                    audience: _aud,
-                    expires: DateTime.Now.AddMinutes(Convert.ToInt32(30)),
                     claims: claims,
-                    signingCredentials: creds
-                    );
+                    expires: expires,
+                    signingCredentials: signingCredentials
+                );
 
                 var accessKey = new JwtSecurityTokenHandler().WriteToken(jwt);
                 var validTo = jwt.ValidTo;

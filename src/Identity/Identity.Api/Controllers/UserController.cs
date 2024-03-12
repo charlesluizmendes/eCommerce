@@ -7,7 +7,6 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Identity.Api.Controllers
 {
-    [Authorize(AuthenticationSchemes = "Bearer")]
     [Route("api/[controller]")]
     [ApiController]
     public class UserController : ControllerBase
@@ -21,14 +20,6 @@ namespace Identity.Api.Controllers
             _mapper = mapper;
         }
 
-        [HttpGet("Get/{id}")]
-        public async Task<ActionResult<UserViewModel>> Get(string id)
-        {
-            var user = await _userService.GetByIdAsync(id);
-
-            return Ok(_mapper.Map<UserViewModel>(user));
-        }
-
         [HttpGet("Get")]
         public async Task<ActionResult<UserViewModel>> Get()
         {
@@ -38,6 +29,15 @@ namespace Identity.Api.Controllers
         }
 
         [AllowAnonymous]
+        [HttpGet("Get/{id}")]
+        public async Task<ActionResult<UserViewModel>> Get(string id)
+        {
+            var user = await _userService.GetByIdAsync(id);
+
+            return Ok(_mapper.Map<UserViewModel>(user));
+        }
+
+
         [HttpPost("Add")]
         public async Task<ActionResult> Add(AddUserViewModel viewModel)
         {

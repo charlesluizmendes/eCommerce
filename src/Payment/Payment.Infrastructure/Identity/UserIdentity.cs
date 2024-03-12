@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Http;
 using System.Security.Claims;
 using System.IdentityModel.Tokens.Jwt;
 
-namespace Basket.Infrastructure.Identity
+namespace Payment.Infrastructure.Identity
 {
     public class UserIdentity : IUserIdentity
     {
