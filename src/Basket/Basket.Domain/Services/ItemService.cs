@@ -9,19 +9,19 @@ namespace Basket.Domain.Services
 {
     public class ItemService : IItemService
     {
-        private readonly NotificationContext _context;
+        private readonly NotificationContext _notification;
         private readonly IItemRepository _repository;
         private readonly IBasketRepository _basketRepository;
         private readonly IUserIdentity _identity;
         private readonly ICatalogClient _client;
 
         public ItemService(IItemRepository repository,
-            NotificationContext context,
+            NotificationContext notification,
             IBasketRepository basketRepository,
             IUserIdentity identity,
             ICatalogClient client)
         {
-            _context = context;
+            _notification = notification;
             _repository = repository;
             _basketRepository = basketRepository;
             _identity = identity;
@@ -34,7 +34,7 @@ namespace Basket.Domain.Services
 
             if (product == null) 
             {
-                _context.AddNotification("Não foi encontrado nenhum Produto");
+                _notification.AddNotification("Não foi encontrado nenhum Produto");
 
                 return;
             }
@@ -90,7 +90,7 @@ namespace Basket.Domain.Services
             // Verifica se o Item existe
             if (item == null) 
             {
-                _context.AddNotification("Não foi encontrado nenhum Item");
+                _notification.AddNotification("Não foi encontrado nenhum Item");
 
                 return; 
             }

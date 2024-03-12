@@ -22,6 +22,9 @@ using System.Text;
 using Payment.Application.AutoMapper;
 using Payment.Domain.Interfaces.Identity;
 using Basket.Infrastructure.Identity;
+using Payment.Domain.Core;
+using Microsoft.AspNetCore.Mvc;
+using Payment.Application.Filters;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -35,8 +38,11 @@ builder.Services.AddTransient<IPixRepository, PixRepository>();
 builder.Services.AddTransient<ITransactionRepository, TransactionRepository>();
 builder.Services.AddTransient<IPaymentService, PaymentService>();
 builder.Services.AddTransient<IUserIdentity, UserIdentity>();
-
 builder.Services.AddTransient<BasketHttpClientHandler>();
+builder.Services.AddScoped<NotificationContext>();
+
+// Add HttpContext
+
 builder.Services.AddHttpContextAccessor();
 
 // AutoMapper
@@ -92,14 +98,17 @@ builder.Services.AddHttpClient("Basket", client =>
     .SetHandlerLifetime(TimeSpan.FromMinutes(5))
     .AddPolicyHandler(GetRetryPolicy());
 
-builder.Services.AddControllers();
+builder.Services.AddControllers(options =>
+    // Filters
+    options.Filters.Add<NotificationFilter>()
+);
 
 // Swagger
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
-    c.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo
+    c.SwaggerDoc("v1", new OpenApiInfo
     {
         Title = "Microservice Payment",
         Description = "Microservice of Payment",
@@ -123,6 +132,24 @@ builder.Services.AddSwaggerGen(c =>
             new[] { "readAccess", "writeAccess" }
         }
     });
+});
+
+// ModelState Validation
+
+builder.Services.Configure<ApiBehaviorOptions>(o =>
+{
+    o.SuppressMapClientErrors = true;
+    o.InvalidModelStateResponseFactory = context =>
+    {
+        var errors = context.ModelState
+            .SelectMany(state => state.Value.Errors)
+            .Select(error => error.ErrorMessage);
+
+        return new BadRequestObjectResult(new Notification()
+        {
+            Errors = new List<string>(errors)
+        });
+    };
 });
 
 // Polly

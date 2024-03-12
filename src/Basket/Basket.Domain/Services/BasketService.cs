@@ -7,17 +7,17 @@ namespace Basket.Domain.Services
 {
     public class BasketService : IBasketService
     {
-        private readonly NotificationContext _context;
+        private readonly NotificationContext _notification;
         private readonly IBasketRepository _repository;
         private readonly IItemRepository _itemRepository;
         private readonly IUserIdentity _identity;
 
-        public BasketService(NotificationContext context,
+        public BasketService(NotificationContext notification,
             IBasketRepository repository, 
             IItemRepository itemRepository,
             IUserIdentity identity)
         {
-            _context = context;
+            _notification = notification;
             _repository = repository;
             _itemRepository = itemRepository;
             _identity = identity;
@@ -26,8 +26,12 @@ namespace Basket.Domain.Services
         public Task<Models.Basket> GetAsync()
         {
             var userId = _identity.GetUserIdFromToken();
+            var basket = _repository.GetByUserIdAsync(userId);
 
-            return _repository.GetByUserIdAsync(userId);
+            if (basket == null) 
+                _notification.AddNotification("Não foi encontrado nenhum Carrinho");
+            
+            return basket;
         }
 
         public async Task RemoveAsync(int id)
@@ -36,7 +40,7 @@ namespace Basket.Domain.Services
 
             if (basket == null)
             {
-                _context.AddNotification("Não foi encontrado nenhum Carrinho");
+                _notification.AddNotification("Não foi encontrado nenhum Carrinho");
 
                 return;
             }

@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
-    <Nullable>enable</Nullable>
+    <Nullable>disable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UserSecretsId>79610b53-6576-4703-a298-1bee5c47adbe</UserSecretsId>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>

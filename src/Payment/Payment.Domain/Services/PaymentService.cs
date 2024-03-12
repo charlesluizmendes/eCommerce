@@ -1,4 +1,5 @@
-﻿using Payment.Domain.Interfaces.Client;
+﻿using Payment.Domain.Core;
+using Payment.Domain.Interfaces.Client;
 using Payment.Domain.Interfaces.EventBus;
 using Payment.Domain.Interfaces.Repositories;
 using Payment.Domain.Interfaces.Services;
@@ -8,6 +9,7 @@ namespace Payment.Domain.Services
 {
     public class PaymentService : IPaymentService
     {
+        private readonly NotificationContext _notification;
         private readonly IPaymentRepository _repository;
         private readonly ICardRepository _cardRepository;
         private readonly IPixRepository _pixRepository;
@@ -15,13 +17,15 @@ namespace Payment.Domain.Services
         private readonly IBasketClient _client;
         private readonly IOrderEventBus _eventBus;
 
-        public PaymentService(IPaymentRepository repository,
+        public PaymentService(NotificationContext notification,
+            IPaymentRepository repository,
             ICardRepository cardRepository,
             IPixRepository pixRepository,
             ITransactionRepository transactionRepository,
             IBasketClient client,
             IOrderEventBus eventBus)
         {
+            _notification = notification;   
             _repository = repository;
             _cardRepository = cardRepository;
             _pixRepository = pixRepository;
@@ -34,14 +38,22 @@ namespace Payment.Domain.Services
         {
             var basket = await _client.GetBaskeAsync();
 
-            if (basket == null)
+            if (basket == null) 
+            {
+                _notification.AddNotification("Não foi encontrado nenhum Carrinho");
+
                 return;
+            }
 
             var payment_ = await _repository.GetByBasketIdAsync(basket.Id);
 
             // Verifica se o Pagamento ja foi criado
             if (payment_ != null)
+            {
+                _notification.AddNotification("O Pagamento já foi realizado");
+
                 return;
+            }
 
             payment.UserId = basket.UserId;
             payment.BasketId = basket.Id;
@@ -95,6 +107,8 @@ namespace Payment.Domain.Services
                 transaction.StatusId = 3;
                 _transactionRepository.Update(transaction);
                 await _transactionRepository.SaveChangesAsync();
+
+                _notification.AddNotification("A Compra foi cancelada");
 
                 return;
             }

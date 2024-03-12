@@ -48,6 +48,9 @@ namespace Identity.Api.Controllers
         {
             var user = await _userService.GetByIdAsync(id);
 
+            if (user != null)
+                return NotFound();
+
             await _userService.DeleteAsync(user);
 
             return Ok();

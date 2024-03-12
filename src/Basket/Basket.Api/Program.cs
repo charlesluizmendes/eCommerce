@@ -91,7 +91,7 @@ builder.Services.AddHttpClient("Catalog", client =>
 builder.Services.AddControllers(options =>
     // Filters
     options.Filters.Add<NotificationFilter>()
-); ;
+);
 
 // Swagger
 
