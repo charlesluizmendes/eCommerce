@@ -66,7 +66,7 @@ curl -X 'POST' \
   -d '{
   "name": "teste",
   "email": "teste@test.com",
-  "senha": "123" 
+  "password": "123" 
 }'
 ```
 
@@ -80,7 +80,7 @@ curl -X 'POST' \
   -H 'Content-Type: application/json' \
   -d '{
   "email": "teste@test.com",
-  "senha": "123" 
+  "password": "123" 
 }'
 ```
 
