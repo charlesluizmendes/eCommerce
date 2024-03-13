@@ -141,7 +141,7 @@ curl -X 'GET' \
 
 ### POST PaymentCard
 
-Para excluir todo o carrinho de compra, utilize o endpoint abaixo:
+Para realizar o pagamento com o Cartão de Credito, utilize o endpoint abaixo:
 ```
 curl -X 'POST' \
   'https://localhost:5000/api/Payment/Card' \
@@ -158,7 +158,7 @@ curl -X 'POST' \
 
 ### POST PaymentPix
 
-Para excluir todo o carrinho de compra, utilize o endpoint abaixo:
+Para realizar o pagamento com PIX, utilize o endpoint abaixo:
 ```
 curl -X 'POST' \
   'https://localhost:5000/api/Payment/Pix' \
