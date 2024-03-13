@@ -58,15 +58,20 @@ namespace Order.Domain.Services
 
             _logger.LogInformation($"Criando Email OrderId: {order.Id}");
 
+            if (order.Id == 0)
+                order = existingOrder;
+
+            order.EmailSend = true;
+            order.Update = DateTime.Now;
+
+            _repository.UpdateAsync(order);
+
             // Envia o Email de Confirmação
             await _emailProxy.SendAsync("no-replay@infnet.com",
                user.Email,
                "Confirmacao de Pedido",
                text);
-
-            order.EmailSend = true;
-
-            _repository.UpdateAsync(order);
+            
             await _repository.SaveChangesAsync();
 
             _logger.LogInformation($"Enviando Email OrderId: {order.Id}");
