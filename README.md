@@ -94,39 +94,9 @@ curl -X 'GET' \
   -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9lbWFpbGFkZHJlc3MiOiJ0ZXN0ZUBjaW5lbWFyay5jb20iLCJleHAiOjE2NTYwMjc0MjQsImlzcyI6ImNoYXJsZXMubWVuZGVzIiwiYXVkIjoiY2hhcmxlcy5tZW5kZXMifQ.UubI-d6hL1KsqZiZxSoDbLHL2PG7k83qiS2TAgpkIWA'
 ```
 
-### GET Product
-
-Para obter a lista com todos os Produtos, utilize o endpoint abaixo:
-```
-curl -X 'GET' \
-  'https://localhost:5000/api/Product/Get/1' \
-  -H 'accept: text/plain' \
-  -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9lbWFpbGFkZHJlc3MiOiJ0ZXN0ZUBjaW5lbWFyay5jb20iLCJleHAiOjE2NTYwMjc0MjQsImlzcyI6ImNoYXJsZXMubWVuZGVzIiwiYXVkIjoiY2hhcmxlcy5tZW5kZXMifQ.UubI-d6hL1KsqZiZxSoDbLHL2PG7k83qiS2TAgpkIWA'
-```
-
-### GET Basket
-
-Para obter os Itens adicionados no carrinho de compra , utilize o endpoint abaixo:
-```
-curl -X 'GET' \
-  'https://localhost:5000/api/Basket/Get' \
-  -H 'accept: text/plain' \
-  -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9lbWFpbGFkZHJlc3MiOiJ0ZXN0ZUBjaW5lbWFyay5jb20iLCJleHAiOjE2NTYwMjc0MjQsImlzcyI6ImNoYXJsZXMubWVuZGVzIiwiYXVkIjoiY2hhcmxlcy5tZW5kZXMifQ.UubI-d6hL1KsqZiZxSoDbLHL2PG7k83qiS2TAgpkIWA'
-```
-
-### DELETE Basket
-
-Para excluir todo o carrinho de compra, utilize o endpoint abaixo:
-```
-curl -X 'DELETE' \
-  'https://localhost:5000/api/Basket/Remove/1' \
-  -H 'accept: text/plain' \
-  -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9lbWFpbGFkZHJlc3MiOiJ0ZXN0ZUBjaW5lbWFyay5jb20iLCJleHAiOjE2NTYwMjc0MjQsImlzcyI6ImNoYXJsZXMubWVuZGVzIiwiYXVkIjoiY2hhcmxlcy5tZW5kZXMifQ.UubI-d6hL1KsqZiZxSoDbLHL2PG7k83qiS2TAgpkIWA'
-```
-
 ### POST AddItem
 
-Para adicionar os itens ao carrinho utilize o endpoint abaixo:
+Para adicionar os itens ao carrinho, utilize o endpoint abaixo:
 ```
 curl -X 'POST' \
   'https://localhost:5000/api/Item/Add' \
@@ -141,10 +111,30 @@ curl -X 'POST' \
 
 ### DELETE RemoveItem
 
-Para remover os itens ao carrinho utilize o endpoint abaixo:
+Para remover o item do carrinho, utilize o endpoint abaixo:
 ```
 curl -X 'DELETE' \
   'https://localhost:5000/api/Item/Remove/1' \
+  -H 'accept: text/plain' \
+  -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9lbWFpbGFkZHJlc3MiOiJ0ZXN0ZUBjaW5lbWFyay5jb20iLCJleHAiOjE2NTYwMjc0MjQsImlzcyI6ImNoYXJsZXMubWVuZGVzIiwiYXVkIjoiY2hhcmxlcy5tZW5kZXMifQ.UubI-d6hL1KsqZiZxSoDbLHL2PG7k83qiS2TAgpkIWA'
+```
+
+### DELETE Basket
+
+Para excluir todo o carrinho de compra, utilize o endpoint abaixo:
+```
+curl -X 'DELETE' \
+  'https://localhost:5000/api/Basket/Remove' \
+  -H 'accept: text/plain' \
+  -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9lbWFpbGFkZHJlc3MiOiJ0ZXN0ZUBjaW5lbWFyay5jb20iLCJleHAiOjE2NTYwMjc0MjQsImlzcyI6ImNoYXJsZXMubWVuZGVzIiwiYXVkIjoiY2hhcmxlcy5tZW5kZXMifQ.UubI-d6hL1KsqZiZxSoDbLHL2PG7k83qiS2TAgpkIWA'
+```
+
+### GET Basket
+
+Para obter os Itens adicionados no carrinho de compra , utilize o endpoint abaixo:
+```
+curl -X 'GET' \
+  'https://localhost:5000/api/Basket/Get' \
   -H 'accept: text/plain' \
   -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9lbWFpbGFkZHJlc3MiOiJ0ZXN0ZUBjaW5lbWFyay5jb20iLCJleHAiOjE2NTYwMjc0MjQsImlzcyI6ImNoYXJsZXMubWVuZGVzIiwiYXVkIjoiY2hhcmxlcy5tZW5kZXMifQ.UubI-d6hL1KsqZiZxSoDbLHL2PG7k83qiS2TAgpkIWA'
 ```
