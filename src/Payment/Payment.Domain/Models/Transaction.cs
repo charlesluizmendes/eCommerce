@@ -8,6 +8,11 @@ namespace Payment.Domain.Models
         [Key]
         public int Id { get; set; }
 
+        [Required]
+        public DateTime Create { get; set; }
+
+        public DateTime? Update { get; set; }
+
         [ForeignKey("Payment")]
         public int PaymentId { get; set; }
         public Payment Payment { get; set; }

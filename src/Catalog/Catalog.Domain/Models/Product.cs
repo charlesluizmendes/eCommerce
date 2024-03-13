@@ -17,6 +17,9 @@ namespace Catalog.Domain.Models
         public double Price { get; set; }
 
         [Required]
+        public DateTime DateHour { get; set; }
+
+        [Required]
         public bool Active { get; set; }
     }
 }

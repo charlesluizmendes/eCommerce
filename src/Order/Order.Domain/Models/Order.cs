@@ -9,6 +9,14 @@ namespace Order.Domain.Models
         public int Id { get; set; }
 
         [Required]
+        public bool EmailSend { get; set; }
+
+        [Required]
+        public DateTime Create { get; set; }     
+        
+        public DateTime? Update { get; set; }        
+
+        [Required]
         public int PaymentId { get; set; }
 
         [ForeignKey("Basket")]

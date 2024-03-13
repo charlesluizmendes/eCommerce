@@ -23,6 +23,7 @@ namespace Catalog.Infrastructure.Context
                     Name = "Biscoito Trakinas",
                     Description = "Biscoito Recheado Sabor Morango",
                     Price = 2.00,
+                    DateHour = DateTime.Now,
                     Active = true
                 },
                 new Product
@@ -31,6 +32,7 @@ namespace Catalog.Infrastructure.Context
                     Name = "Refrigerante Pepsi",
                     Description = "Refrigerante Sabor Cola",
                     Price = 5.00,
+                    DateHour = DateTime.Now,
                     Active = true
                 });
         } 

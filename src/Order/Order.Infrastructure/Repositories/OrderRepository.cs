@@ -42,6 +42,18 @@ namespace Order.Infrastructure.Repositories
             }
         }
 
+        public void UpdateAsync(Domain.Models.Order order)
+        {
+            try
+            {
+                _context.Update(order);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
         public async Task SaveChangesAsync()
         {
             try
@@ -53,6 +65,6 @@ namespace Order.Infrastructure.Repositories
             {
                 throw;
             }
-        }
+        }        
     }
 }

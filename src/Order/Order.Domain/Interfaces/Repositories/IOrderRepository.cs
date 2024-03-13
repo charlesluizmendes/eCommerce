@@ -4,6 +4,7 @@
     {
         Task<Models.Order> GetByBasketIdAsync(int id);
         Task InsertAsync(Models.Order order);
+        void UpdateAsync(Models.Order order);
         Task SaveChangesAsync();
     }
 }

@@ -12,6 +12,9 @@ namespace Payment.Domain.Models
         public double Amount { get; set; }
 
         [Required]
+        public DateTime Create { get; set; }
+
+        [Required]
         public string UserId { get; set; }
 
         [Required]

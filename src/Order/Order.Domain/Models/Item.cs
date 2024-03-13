@@ -21,6 +21,11 @@ namespace Order.Domain.Models
         public double Price { get; set; }
 
         [Required]
+        public DateTime Create { get; set; }
+
+        public DateTime? Update { get; set; }
+
+        [Required]
         public int ProductId { get; set; }        
 
         [ForeignKey("Basket")]

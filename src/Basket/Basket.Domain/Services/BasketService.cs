@@ -48,14 +48,19 @@ namespace Basket.Domain.Services
             foreach (var item in basket.Items)
             {
                 // Remove todos os Items do Carrinho
+                item.Delete = DateTime.Now;
                 item.Active = false;
+
                 _itemRepository.Update(item);
             }
 
             await _itemRepository.SaveChangesAsync();
 
+            // Remover o Carrinho
             basket.Amount = 0;
+            basket.Delete = DateTime.Now;
             basket.Active = false;
+
             _repository.Update(basket);
 
             await _repository.SaveChangesAsync();

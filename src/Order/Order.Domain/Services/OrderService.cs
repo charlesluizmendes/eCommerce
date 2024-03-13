@@ -32,6 +32,9 @@ namespace Order.Domain.Services
             // Verificar se a Order já foi criada
             if (existingOrder == null)
             {
+                order.EmailSend = false;
+                order.Create = DateTime.Now;
+
                 await _repository.InsertAsync(order);
                 await _repository.SaveChangesAsync();
 
@@ -60,6 +63,11 @@ namespace Order.Domain.Services
                user.Email,
                "Confirmacao de Pedido",
                text);
+
+            order.EmailSend = true;
+
+            _repository.UpdateAsync(order);
+            await _repository.SaveChangesAsync();
 
             _logger.LogInformation($"Enviando Email OrderId: {order.Id}");
 

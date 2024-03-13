@@ -55,9 +55,10 @@ namespace Payment.Domain.Services
                 return;
             }
 
-            payment.UserId = basket.UserId;
-            payment.BasketId = basket.Id;
             payment.Amount = basket.Amount;
+            payment.Create = DateTime.Now;
+            payment.UserId = basket.UserId;
+            payment.BasketId = basket.Id;            
 
             // Cria o Pagamento
             await _repository.InsertAsync(payment);
@@ -80,6 +81,7 @@ namespace Payment.Domain.Services
             // Cria a Transação
             await _transactionRepository.InsertAsync(new Transaction()
             {
+                Create = DateTime.Now,
                 PaymentId = payment.Id,
                 StatusId = 1
             });
@@ -104,7 +106,9 @@ namespace Payment.Domain.Services
             if (!confirm)
             {
                 // Atualiza a Transação para 'Cancelada'
+                transaction.Update = DateTime.Now;
                 transaction.StatusId = 3;
+
                 _transactionRepository.Update(transaction);
                 await _transactionRepository.SaveChangesAsync();
 
@@ -112,9 +116,11 @@ namespace Payment.Domain.Services
 
                 return;
             }
-            
+
             // Atualiza a Transação para 'Aprovada'
+            transaction.Update = DateTime.Now;
             transaction.StatusId = 2;
+
             _transactionRepository.Update(transaction);
             await _transactionRepository.SaveChangesAsync();
 

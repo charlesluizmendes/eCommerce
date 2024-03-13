@@ -54,6 +54,7 @@ namespace Basket.Domain.Services
                 {
                     UserId = userId,
                     Items = new List<Item>(),
+                    Create = DateTime.Now,
                     Active = true
                 };
 
@@ -66,11 +67,13 @@ namespace Basket.Domain.Services
             if (existingItem != null)
             {
                 // Se o item já existir, apenas atualize a quantidade
+                existingItem.Update = DateTime.Now;
                 existingItem.Quantity += item.Quantity;
             }
             else
             {
                 // Se o item não existir, crie um novo item e adicione ao carrinho
+                item.Create = DateTime.Now;
                 item.Active = true;
                 basket.Items.Add(item);
             }
@@ -98,11 +101,13 @@ namespace Basket.Domain.Services
             // Remove a Quantidade do Item
             if (item.Quantity > 1)
             {
+                item.Update = DateTime.Now;
                 item.Quantity -= 1;
             }
             else
             {
                 // Remove o Item
+                item.Delete = DateTime.Now;
                 item.Active = false;
                 _repository.Update(item);
             }
@@ -118,6 +123,7 @@ namespace Basket.Domain.Services
             if (activeItems.Count == 0)
             {
                 // Remove o Carrinho
+                basket.Delete = DateTime.Now;
                 basket.Active = false;
                 _basketRepository.Update(basket);
             }
