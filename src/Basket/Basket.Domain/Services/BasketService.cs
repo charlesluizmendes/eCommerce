@@ -23,10 +23,18 @@ namespace Basket.Domain.Services
             _identity = identity;
         }
 
-        public Task<Models.Basket> GetAsync()
+        public async Task<Models.Basket> GetAsync()
         {
             var userId = _identity.GetUserIdFromToken();
-            var basket = _repository.GetByUserIdAsync(userId);
+
+            if (string.IsNullOrEmpty(userId))
+            {
+                _notification.AddNotification("Token Inválido");
+
+                return null;
+            }
+
+            var basket = await _repository.GetByUserIdAsync(userId);
 
             if (basket == null) 
                 _notification.AddNotification("Não foi encontrado nenhum Carrinho");

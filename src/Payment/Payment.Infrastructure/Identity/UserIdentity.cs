@@ -20,12 +20,15 @@ namespace Payment.Infrastructure.Identity
             var token = _httpContextAccessor.HttpContext.Request.Headers["Authorization"].ToString();
 
             if (token.StartsWith("Bearer "))
-            {
                 token = token.Substring(7);
-            }
+            else
+                return null;
 
             var jwtToken = tokenHandler.ReadJwtToken(token);
             var claim = jwtToken.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier);
+
+            if (claim == null)
+                return null;
 
             return claim.Value;
         }

@@ -38,6 +38,14 @@ namespace Identity.Domain.Services
         public async Task<User> GetAsync()
         {
             var userId = _identity.GetUserIdFromToken();
+
+            if (string.IsNullOrEmpty(userId))
+            {
+                _notification.AddNotification("Token Inválido");
+
+                return null;
+            }
+
             var user = await _repository.GetByIdAsync(userId);
 
             if (user == null)
@@ -63,6 +71,14 @@ namespace Identity.Domain.Services
         public async Task DeleteAsync()
         {
             var userId = _identity.GetUserIdFromToken();
+
+            if (string.IsNullOrEmpty(userId))
+            {
+                _notification.AddNotification("Token Inválido");
+
+                return;
+            }
+
             var user = await _repository.GetByIdAsync(userId);
 
             if (user == null) 

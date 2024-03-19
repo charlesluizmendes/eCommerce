@@ -44,6 +44,14 @@ namespace Basket.Domain.Services
             item.Price = product.Price;
 
             var userId = _identity.GetUserIdFromToken();
+
+            if (string.IsNullOrEmpty(userId))
+            {
+                _notification.AddNotification("Token Inválido");
+
+                return;
+            }
+                
             var basket = await _basketRepository.GetByUserIdAsync(userId);
 
             // Verificar se o usuário já possui um carrinho
@@ -113,6 +121,14 @@ namespace Basket.Domain.Services
             }
 
             var userId = _identity.GetUserIdFromToken();
+
+            if (string.IsNullOrEmpty(userId))
+            {
+                _notification.AddNotification("Token Inválido");
+
+                return;
+            }
+
             var basket = await _basketRepository.GetByUserIdAsync(userId);
 
             // Atualiza o valor total do Carrinho
