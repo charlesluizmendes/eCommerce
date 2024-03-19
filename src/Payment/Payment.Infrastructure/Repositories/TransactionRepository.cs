@@ -19,7 +19,8 @@ namespace Payment.Infrastructure.Repositories
             try
             {
                 return await _context.Transaction
-                    .FirstOrDefaultAsync(x => x.PaymentId == paymentId);
+                    .Where(x => x.PaymentId == paymentId)
+                    .FirstOrDefaultAsync();
             }
             catch (Exception)
             {

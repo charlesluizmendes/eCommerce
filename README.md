@@ -43,7 +43,7 @@ User: sa
 Password: Str0ngPa$$w0rd
 ```
 
-### RabiitMQ
+### RabbitMQ
 Para acessar o RabbitMQ Management, utilize as seguintes credenciais:
 ```
 Host: http://localhost:15672/

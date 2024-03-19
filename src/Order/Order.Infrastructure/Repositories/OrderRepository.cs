@@ -18,9 +18,10 @@ namespace Order.Infrastructure.Repositories
             try
             {
                 return await _context.Order
-                    .Include(b => b.Basket)
-                    .Include(b => b.Basket.Items)
-                    .FirstOrDefaultAsync(b => b.Basket.Id == id);
+                    .Include(x => x.Basket)
+                    .Include(x => x.Basket.Items)
+                    .Where(x => x.Basket.Id == id)
+                    .FirstOrDefaultAsync();
             }
             catch (Exception)
             {

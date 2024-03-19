@@ -18,7 +18,8 @@ namespace Payment.Infrastructure.Repositories
             try
             {
                 return await _context.Payment
-                    .FirstOrDefaultAsync(x => x.BasketId == basketId);
+                    .Where(x => x.BasketId == basketId)
+                    .FirstOrDefaultAsync();
             }
             catch (Exception)
             {

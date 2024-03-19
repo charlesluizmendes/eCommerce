@@ -30,7 +30,9 @@ namespace Identity.Infraestructure.Repositories
         {
             try
             {
-                return await _userManager.Users.FirstOrDefaultAsync(x => x.Email.Equals(email));
+                return await _userManager.Users
+                    .Where(x => x.Email == email)
+                    .FirstOrDefaultAsync();
             }
             catch (Exception)
             {
