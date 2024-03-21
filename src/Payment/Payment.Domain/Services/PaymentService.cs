@@ -10,26 +10,17 @@ namespace Payment.Domain.Services
     public class PaymentService : IPaymentService
     {
         private readonly NotificationContext _notification;
-        private readonly IPaymentRepository _repository;
-        private readonly ICardRepository _cardRepository;
-        private readonly IPixRepository _pixRepository;
-        private readonly ITransactionRepository _transactionRepository;
+        private readonly IUnitOfWork _uow;
         private readonly IBasketClient _client;
         private readonly IOrderEventBus _eventBus;
 
         public PaymentService(NotificationContext notification,
-            IPaymentRepository repository,
-            ICardRepository cardRepository,
-            IPixRepository pixRepository,
-            ITransactionRepository transactionRepository,
+            IUnitOfWork uow,
             IBasketClient client,
             IOrderEventBus eventBus)
         {
-            _notification = notification;   
-            _repository = repository;
-            _cardRepository = cardRepository;
-            _pixRepository = pixRepository;
-            _transactionRepository = transactionRepository;
+            _notification = notification;
+            _uow = uow;
             _client = client;
             _eventBus = eventBus;
         }
@@ -45,7 +36,7 @@ namespace Payment.Domain.Services
                 return;
             }
 
-            var payment_ = await _repository.GetByBasketIdAsync(basket.Id);
+            var payment_ = await _uow.PaymentRepository.GetByBasketIdAsync(basket.Id);
 
             // Verifica se o Pagamento ja foi criado
             if (payment_ != null)
@@ -61,31 +52,29 @@ namespace Payment.Domain.Services
             payment.BasketId = basket.Id;            
 
             // Cria o Pagamento
-            await _repository.InsertAsync(payment);
+            await _uow.PaymentRepository.InsertAsync(payment);
 
             if (payment.Card != null)
             {
                 payment.Card.Number = HideCardNumber(payment.Card.Number);
-                await _cardRepository.InsertAsync(payment.Card);
-                await _cardRepository.SaveChangesAsync();   
+                await _uow.CardRepository.InsertAsync(payment.Card);
             }
 
             if (payment.Pix != null)
             {
-                await _pixRepository.InsertAsync(payment.Pix);
-                await _pixRepository.SaveChangesAsync();    
+                await _uow.PixRepository.InsertAsync(payment.Pix);
             }
 
-            await _repository.SaveChangesAsync();
+            _uow.Commit();
 
             // Cria a Transação
-            await _transactionRepository.InsertAsync(new Transaction()
+            await _uow.TransactionRepository.InsertAsync(new Transaction()
             {
                 Create = DateTime.Now,
                 PaymentId = payment.Id,
                 StatusId = 1
             });
-            await _transactionRepository.SaveChangesAsync();
+            _uow.Commit();
 
             #region module Payment External
 
@@ -101,7 +90,7 @@ namespace Payment.Domain.Services
             #endregion
 
             // Obter a Transação 
-            var transaction = await _transactionRepository.GetByPaymentIdAsync(payment.Id);
+            var transaction = await _uow.TransactionRepository.GetByPaymentIdAsync(payment.Id);
 
             if (!confirm)
             {
@@ -109,8 +98,8 @@ namespace Payment.Domain.Services
                 transaction.Update = DateTime.Now;
                 transaction.StatusId = 3;
 
-                _transactionRepository.Update(transaction);
-                await _transactionRepository.SaveChangesAsync();
+                _uow.TransactionRepository.Update(transaction);
+                _uow.Commit();
 
                 _notification.AddNotification("A Compra foi cancelada");
 
@@ -121,8 +110,8 @@ namespace Payment.Domain.Services
             transaction.Update = DateTime.Now;
             transaction.StatusId = 2;
 
-            _transactionRepository.Update(transaction);
-            await _transactionRepository.SaveChangesAsync();
+            _uow.TransactionRepository.Update(transaction);
+            _uow.Commit();
 
             // Remove o Carrinho
             await _client.RemoveBasketByIdAsync(basket.Id);

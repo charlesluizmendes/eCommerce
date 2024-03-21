@@ -43,6 +43,7 @@ builder.Services.AddTransient<IPaymentRepository, PaymentRepository>();
 builder.Services.AddTransient<ICardRepository, CardRepository>();
 builder.Services.AddTransient<IPixRepository, PixRepository>();
 builder.Services.AddTransient<ITransactionRepository, TransactionRepository>();
+builder.Services.AddTransient<IUnitOfWork, UnitOfWork>();
 builder.Services.AddTransient<IPaymentService, PaymentService>();
 builder.Services.AddTransient<IUserIdentity, UserIdentity>();
 builder.Services.AddTransient<BasketHttpClientHandler>();

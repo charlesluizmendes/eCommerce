@@ -5,6 +5,5 @@ namespace Payment.Domain.Interfaces.Repositories
     public interface IPixRepository
     {
         Task InsertAsync(Pix card);
-        Task SaveChangesAsync();
     }
 }

@@ -8,6 +8,5 @@ namespace Basket.Domain.Interfaces.Repositories
         Task<Models.Basket> GetByUserIdAsync(string userId);
         Task AddAsync(Models.Basket basket);
         void Update(Models.Basket basket);
-        Task SaveChangesAsync();
     }
 }

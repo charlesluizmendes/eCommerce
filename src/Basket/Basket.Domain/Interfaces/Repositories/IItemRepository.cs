@@ -6,6 +6,5 @@ namespace Basket.Domain.Interfaces.Repositories
     {
         Task<Item> GetByIdAsync(int id);
         void Update(Item item);
-        Task SaveChangesAsync();
     }
 }

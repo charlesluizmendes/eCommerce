@@ -59,17 +59,5 @@ namespace Basket.Infrastructure.Repositories
                 throw;
             }
         }
-
-        public async Task SaveChangesAsync()
-        {
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (Exception)
-            {
-                throw;
-            }
-        }
     }
 }

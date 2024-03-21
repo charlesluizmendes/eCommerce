@@ -35,9 +35,10 @@ builder.Services.AddControllers(o =>
 // IoC
 
 builder.Services.AddTransient<IBasketService, BasketService>();
-builder.Services.AddTransient<IBasketRepository, BasketRepository>();
 builder.Services.AddTransient<IItemService, ItemService>();
+builder.Services.AddTransient<IBasketRepository, BasketRepository>();
 builder.Services.AddTransient<IItemRepository, ItemRepository>();
+builder.Services.AddTransient<IUnitOfWork, UnitOfWork>();
 builder.Services.AddTransient<ICatalogClient, CatalogClient>();
 builder.Services.AddTransient<IUserIdentity, UserIdentity>();
 builder.Services.AddScoped<NotificationContext>();

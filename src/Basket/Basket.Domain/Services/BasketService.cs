@@ -8,18 +8,15 @@ namespace Basket.Domain.Services
     public class BasketService : IBasketService
     {
         private readonly NotificationContext _notification;
-        private readonly IBasketRepository _repository;
-        private readonly IItemRepository _itemRepository;
+        private readonly IUnitOfWork _uow;
         private readonly IUserIdentity _identity;
 
         public BasketService(NotificationContext notification,
-            IBasketRepository repository, 
-            IItemRepository itemRepository,
+            IUnitOfWork uow,
             IUserIdentity identity)
         {
             _notification = notification;
-            _repository = repository;
-            _itemRepository = itemRepository;
+            _uow = uow;
             _identity = identity;
         }
 
@@ -34,7 +31,7 @@ namespace Basket.Domain.Services
                 return null;
             }
 
-            var basket = await _repository.GetByUserIdAsync(userId);
+            var basket = await _uow.BasketRepository.GetByUserIdAsync(userId);
 
             if (basket == null) 
                 _notification.AddNotification("Não foi encontrado nenhum Carrinho");
@@ -44,7 +41,7 @@ namespace Basket.Domain.Services
 
         public async Task RemoveAsync(int id)
         {
-            var basket = await _repository.GetByIdAsync(id);
+            var basket = await _uow.BasketRepository.GetByIdAsync(id);
 
             if (basket == null)
             {
@@ -59,19 +56,17 @@ namespace Basket.Domain.Services
                 item.Delete = DateTime.Now;
                 item.Active = false;
 
-                _itemRepository.Update(item);
+                _uow.ItemRepository.Update(item);
             }
-
-            await _itemRepository.SaveChangesAsync();
 
             // Remover o Carrinho
             basket.Amount = 0;
             basket.Delete = DateTime.Now;
             basket.Active = false;
 
-            _repository.Update(basket);
+            _uow.BasketRepository.Update(basket);
 
-            await _repository.SaveChangesAsync();
+            _uow.Commit();
         }
     }
 }

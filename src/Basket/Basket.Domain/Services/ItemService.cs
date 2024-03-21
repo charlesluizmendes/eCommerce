@@ -10,20 +10,17 @@ namespace Basket.Domain.Services
     public class ItemService : IItemService
     {
         private readonly NotificationContext _notification;
-        private readonly IItemRepository _repository;
-        private readonly IBasketRepository _basketRepository;
+        private readonly IUnitOfWork _uow;
         private readonly IUserIdentity _identity;
         private readonly ICatalogClient _client;
 
-        public ItemService(IItemRepository repository,
-            NotificationContext notification,
-            IBasketRepository basketRepository,
+        public ItemService(NotificationContext notification,
+            IUnitOfWork uow,
             IUserIdentity identity,
             ICatalogClient client)
         {
             _notification = notification;
-            _repository = repository;
-            _basketRepository = basketRepository;
+            _uow = uow;
             _identity = identity;
             _client = client;
         }
@@ -52,7 +49,7 @@ namespace Basket.Domain.Services
                 return;
             }
                 
-            var basket = await _basketRepository.GetByUserIdAsync(userId);
+            var basket = await _uow.BasketRepository.GetByUserIdAsync(userId);
 
             // Verificar se o usuário já possui um carrinho
             if (basket == null)
@@ -66,7 +63,7 @@ namespace Basket.Domain.Services
                     Active = true
                 };
 
-                await _basketRepository.AddAsync(basket);
+                await _uow.BasketRepository.AddAsync(basket);
             }
 
             var existingItem = basket.Items.FirstOrDefault(x => x.ProductId == item.ProductId && x.Active);
@@ -91,12 +88,12 @@ namespace Basket.Domain.Services
             basket.Amount = activeItems.Sum(x => x.Quantity * x.Price);
 
             // Salva as alterações
-            await _repository.SaveChangesAsync();
+            _uow.Commit();
         }
 
         public async Task RemoveFromBasketAsync(int id)
         {
-            var item = await _repository.GetByIdAsync(id);
+            var item = await _uow.ItemRepository.GetByIdAsync(id);
 
             // Verifica se o Item existe
             if (item == null) 
@@ -117,7 +114,7 @@ namespace Basket.Domain.Services
                 // Remove o Item
                 item.Delete = DateTime.Now;
                 item.Active = false;
-                _repository.Update(item);
+                _uow.ItemRepository.Update(item);
             }
 
             var userId = _identity.GetUserIdFromToken();
@@ -129,7 +126,7 @@ namespace Basket.Domain.Services
                 return;
             }
 
-            var basket = await _basketRepository.GetByUserIdAsync(userId);
+            var basket = await _uow.BasketRepository.GetByUserIdAsync(userId);
 
             // Atualiza o valor total do Carrinho
             var activeItems = basket.Items.Where(x => x.Active).ToList();
@@ -141,11 +138,11 @@ namespace Basket.Domain.Services
                 // Remove o Carrinho
                 basket.Delete = DateTime.Now;
                 basket.Active = false;
-                _basketRepository.Update(basket);
+                _uow.BasketRepository.Update(basket);
             }
 
             // Salva as alterações
-            await _repository.SaveChangesAsync();
+            _uow.Commit();
         }
     }
 }
