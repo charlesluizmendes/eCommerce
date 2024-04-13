@@ -126,14 +126,10 @@ namespace Payment.Domain.Services
 
         #region Private Methods
 
-        private static string HideCardNumber(string numeroCartao)
+        private static string HideCardNumber(string number)
         {
             // Mantém os primeiros e últimos 4 dígitos e substitui os restantes por asteriscos
-            string numeroOculto = numeroCartao.Substring(0, 4) +
-                                  new string('*', numeroCartao.Length - 8) +
-                                  numeroCartao.Substring(numeroCartao.Length - 4, 4);
-
-            return numeroOculto;
+            return number.Substring(0, 4) + new string('*', number.Length - 8) + number.Substring(number.Length - 4, 4);
         }
 
         #endregion
