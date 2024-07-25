@@ -32,8 +32,9 @@ Para a criação do banco de dados e tabelas, entre no Gerenciador de Pacotes Nu
 ```
 PM> Update-Database
 ```
-* Para MasOs/Linux,ir até o diretório "Api" de cada microserviço e executar o seguinte comando:
+* Para MasOs/Linux, ir até o diretório "Infrastructure.Data" de cada microserviço e executar o seguinte comando:
 ```
+CLI> dotnet tool install --global dotnet-ef
 CLI> dotnet ef database update
 ```
 Para acessar o SQL Server no client, utilize as seguintes credenciais:
